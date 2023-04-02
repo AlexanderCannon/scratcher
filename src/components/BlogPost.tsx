@@ -45,9 +45,10 @@ const BlogPost = ({
           {format(date, "MMMM do, yyyy")}
         </Typography>
       </div>
-      <div className="prose max-w-none">
-        <Markdown content={content} />
-      </div>
+      <article className="prose max-w-none lg:prose-xl">
+      <MDXProvider components={components}>
+        <html dangerouslySetInnerHTML={{ __html: content }} />
+      </article>
       <Link href={`/contributors/${author.slug ?? ""}`}>
         <Typography
           as="h2"
