@@ -51,6 +51,7 @@ enum UserRole {
 model User {
     id            String    @id @default(cuid())
     username      String?   @unique
+    slug          String?   @unique
     name          String?
     email         String?   @unique
     emailVerified DateTime?
@@ -74,6 +75,7 @@ model Post {
     id         String     @id @default(cuid())
     title      String
     content    String
+    image      String?
     published  Boolean    @default(false)
     author     User       @relation(fields: [authorId], references: [id])
     categories Category[]
@@ -86,6 +88,7 @@ model Post {
 model Category {
     id          String  @id @default(cuid())
     name        String  @unique
+    slug        String  @unique
     description String?
     posts       Post[]
 }

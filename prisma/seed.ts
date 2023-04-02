@@ -25,26 +25,38 @@ const selectUserRole = (i: number) => {
   }
 };
 
+function generateUniqueNouns(amount: number): string[] {
+  const uniqueNouns = new Set();
+  while (uniqueNouns.size < amount) {
+    const noun = faker.random.word();
+    uniqueNouns.add(noun);
+  }
+  return Array.from(uniqueNouns) as unknown as string[];
+}
+
 async function main() {
-  const amountOfUsers = 50;
-  const amountOfCategories = 10;
+  const amountOfUsers = 100;
+  const amountOfCategories = 30;
 
-  const categories: Category[] = [];
-
-  for (let i = 0; i < amountOfCategories; i++) {
+  const categoriesList = generateUniqueNouns(amountOfCategories);
+  const categoryPromises = categoriesList.map(async (name) => {
     const category = await prisma.category.create({
       data: {
-        name: faker.lorem.word(),
+        name: name,
         description: faker.lorem.sentence(),
+        slug: name
+          .toLocaleLowerCase()
+          .replaceAll(" ", "-")
+          .replaceAll(/\./g, ""),
       },
     });
-    categories.push(category);
-  }
+    return category;
+  });
+
+  const categories = await Promise.all(categoryPromises);
 
   for (let i = 0; i < amountOfUsers; i++) {
     const role = selectUserRole(i % 25);
-    if (role === UserRole.CONTRIBUTOR || role === UserRole.EDITOR) {
-    }
     const name = faker.name.fullName();
     const user = await prisma.user.create({
       data: {
@@ -52,9 +64,13 @@ async function main() {
         role: role,
         email: faker.internet.email(name),
         username: faker.internet.userName(name),
+        slug: name.replaceAll(" ", "-").toLocaleLowerCase(),
       },
     });
-    if (categories.length > 0) {
+    if (
+      (categories.length > 0 && role === "CONTRIBUTOR") ||
+      role === "EDITOR"
+    ) {
       const cat1 = categories[
         Math.floor(Math.random() * categories.length)
       ] as Category;
@@ -67,7 +83,10 @@ async function main() {
       await prisma.post.create({
         data: {
           title: faker.lorem.sentence(),
-          content: faker.lorem.paragraphs(),
+          content: faker.lorem.paragraphs(
+            Math.round(Math.random() * 20) + 1,
+            "\n"
+          ),
           slug: faker.lorem.slug(),
           authorId: user.id,
           categories: {
