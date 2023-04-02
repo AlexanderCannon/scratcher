@@ -46,7 +46,7 @@ const BlogPost = ({
         </Typography>
       </div>
       <article className="prose max-w-none lg:prose-xl">
-      <MDXProvider components={components}>
+        {/* <MDXProvider components={components}> */}
         <html dangerouslySetInnerHTML={{ __html: content }} />
       </article>
       <Link href={`/contributors/${author.slug ?? ""}`}>

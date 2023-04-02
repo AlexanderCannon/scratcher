@@ -1,12 +1,12 @@
-import Head from "next/head";
+import { default as NextHead } from "next/head";
 
 interface LayoutProps {
   title: string;
 }
 
-export default function Layout({ title }: LayoutProps) {
+export default function Head({ title }: LayoutProps) {
   return (
-    <Head>
+    <NextHead>
       <title>{title}</title>
       <link
         rel="apple-touch-icon"
@@ -33,6 +33,6 @@ export default function Layout({ title }: LayoutProps) {
         name="description"
         content="Scratcher, the way to monetize your work"
       />
-    </Head>
+    </NextHead>
   );
 }
