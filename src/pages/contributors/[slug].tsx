@@ -47,7 +47,6 @@ const ContributorPage = () => {
             {data.name}
           </Typography>
           <List>
-            {/* eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */}
             {posts.map((post: Post) => (
               <ListItem key={post.id}>
                 <Link href={`/posts/${post.slug}`}>

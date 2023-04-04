@@ -38,7 +38,6 @@ export default function PostPage() {
     <Layout>
       <BlogPost
         image={
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           data.image ?? "https://api.lorem.space/image/furniture?w=1200&h=600"
         }
         title={data.title}

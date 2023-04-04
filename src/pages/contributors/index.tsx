@@ -68,8 +68,7 @@ const Contributors = () => {
             {currentPage?.map((user) => {
               return (
                 <Link
-                  //  eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                  href={`/contributors/${user.slug}`}
+                  href={`/contributors/${user.slug ?? ""}`}
                   className="m-6"
                   key={user.id}
                 >

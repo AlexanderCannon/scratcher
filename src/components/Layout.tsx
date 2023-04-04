@@ -11,7 +11,7 @@ const Layout = ({ children, title }: LayoutProps) => {
     <div className="min-h-screen bg-gradient-to-b from-[#aabbcc] to-[#009988]">
       <Head title={title} />
       <Nav />
-      <main className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center">
+      <main className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center pt-28">
         {children}
       </main>
       <Footer />

@@ -1,12 +1,12 @@
 import z from "zod";
 import {
   createTRPCRouter,
-  protectedAdminProcedure,
+  protectedContributorProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
 
 export const categoriesRouter = createTRPCRouter({
-  getAll: protectedAdminProcedure.query(({ ctx }) => {
+  getAll: protectedContributorProcedure.query(({ ctx }) => {
     return ctx.prisma.category.findMany();
   }),
 

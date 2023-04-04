@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const path = require("path");
+import path from "path";
 
 /** @type {import("eslint").Linter.Config} */
 const config = {
@@ -31,6 +30,10 @@ const config = {
     "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     "react-hooks/exhaustive-deps": 0,
     "@typescript-eslint/restrict-template-expressions": 0,
+    "@typescript-eslint/no-unsafe-call": 0,
+    "@typescript-eslint/no-unsafe-assignment": 0,
+    "@typescript-eslint/no-unsafe-member-access": 0,
+    "@typescript-eslint/no-unsafe-return": 0,
   },
 };
 

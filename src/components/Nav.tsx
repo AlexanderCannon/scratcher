@@ -7,14 +7,14 @@ const logo = Logo as StaticImageData;
 
 export default function Nav() {
   return (
-    <nav className="mb-6 bg-white shadow">
+    <nav className="fixed top-0 z-50 mb-6 w-full bg-white shadow">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-24 justify-between">
+        <div className="flex h-16 justify-between">
           <div className="flex">
             <div className="flex flex-shrink-0 items-center">
               <Link href="/">
                 <Image
-                  className="block h-24 w-auto lg:hidden"
+                  className="block h-16 w-auto lg:hidden"
                   src={logo}
                   alt="Logo"
                 />
