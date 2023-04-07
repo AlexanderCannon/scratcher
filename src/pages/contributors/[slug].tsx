@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { api } from "../../utils/api";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "~/components/Link";
 import Layout from "~/components/Layout";
 import NotFound from "~/components/NotFound";
 import Loading from "~/components/Loading";

@@ -7,7 +7,6 @@ interface MarkdownProps {
 }
 
 const Markdown: React.FC<MarkdownProps> = ({ content }) => {
-  console.log(content);
   const htmlContent = remark().use(html).processSync(content).toString();
 
   return <div dangerouslySetInnerHTML={{ __html: htmlContent }} />;

@@ -6,11 +6,13 @@ import Button from "./Button";
 interface ImageUploaderProps {
   onUpload: (files: File[]) => void;
   placeHolder?: string;
+  className?: string;
 }
 
 export default function ImageUploader({
   onUpload,
   placeHolder = "Upload an image",
+  className,
 }: ImageUploaderProps) {
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
     accept: {
@@ -21,20 +23,17 @@ export default function ImageUploader({
   });
 
   useEffect(() => {
-    console.log(acceptedFiles);
     onUpload(acceptedFiles);
   }, [acceptedFiles]);
 
   const acceptedFileItems = acceptedFiles.map((file) => (
-    <span key={file.name}>
-      {file.name} - {file.size} bytes
-    </span>
+    <span key={file.name}>{file.name}</span>
   ));
 
   return (
     <div {...getRootProps({ className: "dropzone" })}>
       <input {...getInputProps()} />
-      <Button>
+      <Button className={className} fullWidth>
         {acceptedFileItems.length === 0 ? placeHolder : acceptedFileItems}
       </Button>
     </div>

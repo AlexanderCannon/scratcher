@@ -1,5 +1,5 @@
 import { api } from "~/utils/api";
-import Link from "next/link";
+import Link from "~/components/Link";
 import Layout from "~/components/Layout";
 import { List, ListItem } from "~/components/List";
 import NotFound from "~/components/NotFound";

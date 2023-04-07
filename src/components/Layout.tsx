@@ -8,10 +8,10 @@ interface LayoutProps {
 
 const Layout = ({ children, title }: LayoutProps) => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#aabbcc] to-[#009988]">
+    <div className="min-h-screen bg-white">
       <Head title={title} />
       <Nav />
-      <main className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center pt-28">
+      <main className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center bg-gray-100 pt-28">
         {children}
       </main>
       <Footer />

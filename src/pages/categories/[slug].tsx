@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import Link from "next/link";
+import Link from "~/components/Link";
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout";
 import Loading from "~/components/Loading";

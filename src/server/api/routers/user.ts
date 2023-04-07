@@ -2,6 +2,7 @@ import { z } from "zod";
 import { UserRole } from "@prisma/client";
 import {
   createTRPCRouter,
+  protectedAdminProcedure,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
@@ -25,14 +26,24 @@ export const userRouter = createTRPCRouter({
     });
   }),
 
-  getById: protectedProcedure.input(z.string()).query(({ ctx, input }) => {
+  getById: publicProcedure.input(z.string()).query(({ ctx, input }) => {
     return ctx.prisma.user.findFirst({
       where: {
         id: input,
+        role: {
+          in: [UserRole.CONTRIBUTOR, UserRole.EDITOR],
+        },
       },
     });
   }),
 
+  get: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.user.findFirst({
+      where: {
+        id: ctx.session.user.id,
+      },
+    });
+  }),
   getContributors: publicProcedure.query(({ ctx }) =>
     ctx.prisma.user.findMany({
       where: {
@@ -75,5 +86,43 @@ export const userRouter = createTRPCRouter({
         items,
         nextCursor,
       };
+    }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().optional(),
+        email: z.string().optional(),
+        username: z.string().optional(),
+        phone: z.string().optional(),
+        image: z.string().optional(),
+        slug: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const data = input;
+      return ctx.prisma.user.update({
+        where: {
+          id: ctx.session.user.id,
+        },
+        data,
+      });
+    }),
+  adminUpdate: protectedAdminProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        phoneNumber: z.string(),
+        role: z.enum([UserRole.ADMIN, UserRole.EDITOR, UserRole.CONTRIBUTOR]),
+        image: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const data = input;
+      return ctx.prisma.user.update({
+        where: {
+          id: ctx.session.user.id,
+        },
+        data,
+      });
     }),
 });

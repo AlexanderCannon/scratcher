@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Select, {
   GetOptionLabel,
   GetOptionValue,
@@ -12,6 +12,7 @@ interface MultiSelectDropdownProps<T> {
   optionLabel: GetOptionLabel<T>;
   className?: string;
   onChange: (selectedOptions: T[]) => void;
+  initialValue?: T[];
 }
 
 function MultiSelectDropdown<T>({
@@ -21,13 +22,22 @@ function MultiSelectDropdown<T>({
   optionLabel,
   className,
   onChange,
+  initialValue,
 }: MultiSelectDropdownProps<T>) {
-  const [selectedOptions, setSelectedOptions] = useState<T[]>([]);
+  const [selectedOptions, setSelectedOptions] = useState<T[]>(
+    initialValue ?? []
+  );
 
   const handleSelectChange = (newValue: any) => {
     setSelectedOptions(newValue);
     onChange(newValue);
   };
+
+  useEffect(() => {
+    if (initialValue) {
+      setSelectedOptions(initialValue);
+    }
+  }, [initialValue]);
 
   return (
     <Select
@@ -39,9 +49,7 @@ function MultiSelectDropdown<T>({
       getOptionLabel={optionLabel}
       getOptionValue={optionValue}
       isSearchable
-      className={`block w-full rounded-md border border-gray-300 px-4 py-2 text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-        className ?? ""
-      }`}
+      className={`text-gray-700 ${className ?? ""}`}
     />
   );
 }

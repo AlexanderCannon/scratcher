@@ -1,9 +1,12 @@
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import Typography from "./Typography";
 import format from "date-fns/format";
 import { type User, type Category } from "@prisma/client";
-import Link from "next/link";
-import Markdown from "./Markdown";
+import Link from "~/components/Link";
+import { remark } from "remark";
+import html from "remark-html";
+import Typography from "./Typography";
+import Loading from "./Loading";
 
 interface BlogPostProps {
   title: string;
@@ -22,6 +25,19 @@ const BlogPost = ({
   content,
   categories,
 }: BlogPostProps) => {
+  const [htmlContent, setHtmlContent] = useState<string>("");
+
+  const renderContent = async () => {
+    const processedContent = await remark().use(html).process(content);
+    const contentHtml = processedContent.toString();
+    setHtmlContent(contentHtml);
+  };
+
+  useEffect(() => {
+    renderContent();
+  }, [content]);
+
+  if (!htmlContent) return <Loading />;
   return (
     <div className="mx-auto max-w-5xl px-4">
       <div className="mb-8">
@@ -45,9 +61,8 @@ const BlogPost = ({
           {format(date, "MMMM do, yyyy")}
         </Typography>
       </div>
-      <article className="prose max-w-none lg:prose-xl">
-        {/* <MDXProvider components={components}> */}
-        <html dangerouslySetInnerHTML={{ __html: content }} />
+      <article className="pa prose max-w-none bg-slate-100 p-6 lg:prose-xl">
+        <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
       </article>
       <Link href={`/contributors/${author.slug ?? ""}`}>
         <Typography
@@ -58,12 +73,12 @@ const BlogPost = ({
           Words supplied by {author.name ?? "Mr. Cool"}
         </Typography>
       </Link>
+      <Typography as="h2" variant="subheading">
+        Tags:
+      </Typography>
       <ul>
         {categories.map((category) => (
           <li key={category.id}>
-            <Typography as="h2" variant="subheading">
-              Tags:
-            </Typography>
             <Link href={`/categories/${category.slug}`}>{category.name}</Link>
           </li>
         ))}

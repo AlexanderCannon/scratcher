@@ -27,9 +27,10 @@ export const postsRouter = createTRPCRouter({
         skip: skip,
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: {
-          id: "asc",
+          createdAt: "desc",
         },
         where: {
+          published: true,
           categories: {
             some: {
               id: categoryId,
@@ -53,11 +54,16 @@ export const postsRouter = createTRPCRouter({
       where: {
         id: input,
       },
+      include: {
+        categories: true,
+        author: true,
+      },
     });
   }),
   getBySlug: publicProcedure.input(z.string()).query(({ ctx, input }) => {
     return ctx.prisma.post.findFirst({
       where: {
+        published: true,
         slug: input,
       },
       include: {
@@ -66,6 +72,21 @@ export const postsRouter = createTRPCRouter({
       },
     });
   }),
+
+  getBySlugContributor: protectedContributorProcedure
+    .input(z.string())
+    .query(({ ctx, input }) => {
+      return ctx.prisma.post.findFirst({
+        where: {
+          authorId: ctx.session.user.id,
+          slug: input,
+        },
+        include: {
+          categories: true,
+          author: true,
+        },
+      });
+    }),
   getByAuthor: publicProcedure.input(z.string()).query(({ ctx, input }) => {
     return ctx.prisma.post.findMany({
       where: {
@@ -92,6 +113,7 @@ export const postsRouter = createTRPCRouter({
         authorId: z.string(),
         categories: z.array(z.string()),
         image: z.string().optional(),
+        published: z.boolean().optional(),
       })
     )
     .mutation(({ ctx, input }) => {
@@ -104,6 +126,8 @@ export const postsRouter = createTRPCRouter({
             .replaceAll(/[\;\,\/\?\:\@\&\=\+\$\_\.!\~\*\'\(\)\#]/g, ""),
           content: input.content,
           authorId: input.authorId,
+          createdAt: new Date(),
+          published: input.published,
           categories: {
             connect: input.categories.map((id) => ({ id })),
           },
@@ -119,9 +143,17 @@ export const postsRouter = createTRPCRouter({
         authorId: z.string(),
         categories: z.array(z.string()),
         image: z.string().optional(),
+        published: z.boolean().optional(),
       })
     )
     .mutation(({ ctx, input }) => {
+      if (
+        ctx.session.user.role !== "ADMIN" &&
+        ctx.session.user.role !== "EDITOR" &&
+        ctx.session.user.id !== input.authorId
+      ) {
+        throw new Error("Not authorized");
+      }
       return ctx.prisma.post.update({
         where: {
           id: input.id,
@@ -134,6 +166,9 @@ export const postsRouter = createTRPCRouter({
             .replaceAll(/[\;\,\/\?\:\@\&\=\+\$\_\.!\~\*\'\(\)\#]/g, ""),
           content: input.content,
           authorId: input.authorId,
+          published: input.published,
+          image: input.image,
+          updatedAt: new Date(),
           categories: {
             connect: input.categories.map((id) => ({ id })),
           },
@@ -152,6 +187,13 @@ export const postsRouter = createTRPCRouter({
       })
     )
     .mutation(({ ctx, input }) => {
+      if (
+        ctx.session.user.role !== "ADMIN" &&
+        ctx.session.user.role !== "EDITOR" &&
+        ctx.session.user.id !== input.authorId
+      ) {
+        throw new Error("Not authorized");
+      }
       return ctx.prisma.post.update({
         where: {
           id: input.id,
@@ -166,6 +208,7 @@ export const postsRouter = createTRPCRouter({
               .replaceAll(/[\;\,\/\?\:\@\&\=\+\$\_\.!\~\*\'\(\)\#]/g, ""),
           content: input.content,
           authorId: input.authorId,
+          image: input.image,
           categories: {
             connect: input.categories?.map((id) => ({ id })),
           },

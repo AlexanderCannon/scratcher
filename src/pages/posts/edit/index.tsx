@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Category } from "@prisma/client";
+import { useRouter } from "next/router";
 import Layout from "~/components/Layout";
 import { api } from "~/utils/api";
 import MarkdownEditor from "~/components/MarkdownEditor";
@@ -8,35 +10,36 @@ import ImageUploader from "~/components/ImageUploader";
 import Button from "~/components/Button";
 import Select from "~/components/Select";
 import Loading from "~/components/Loading";
-import { Category } from "@prisma/client";
 
 export default function Editor() {
-  const { query } = useRouter();
+  const { data: categoryData } = api.categories.getAll.useQuery(undefined, {
+    staleTime: Infinity,
+  });
+  const { data: sessionData } = useSession();
+  const router = useRouter();
+
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [fileUrl, setFileUrl] = useState<string>();
   const [articleCategories, setArticleCategories] = useState<Category[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
 
-  const { data: categoryData } = api.categories.getAll.useQuery();
-  const { data: createdPost } = api.posts.getById.useQuery(postId);
-  const { data: sessionData } = useSession();
-
   const createPost = api.posts.create.useMutation();
-  const updatePost = api.posts.update.useMutation();
-  const handleSave = async () => {
+
+  const savePost = async (publish = false) => {
     setSaving(true);
-    updatePost.mutate(
+    createPost.mutate(
       {
         authorId: sessionData?.user.id ?? "",
-        id: postId,
         title,
         content,
         image: fileUrl,
         categories: articleCategories.map(({ id }) => id),
+        published: publish,
       },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          router.push(`/posts/editor/${data.id}`);
           setSaving(false);
         },
         onError: (error) => {
@@ -50,17 +53,25 @@ export default function Editor() {
     );
   };
 
+  const handleSave = () => savePost(false);
+
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
 
   const handlePublish = () => {
-    console.log(content);
+    savePost(true);
+  };
+
+  const handlePreview = () => {
+    return "please save your post first";
   };
 
   const handleFileChange = ([newFile]: File[]) => {
-    console.log("uploading file", newFile);
-    setFileUrl("https://picsum.photos/1000");
+    if (newFile) {
+      console.log("uploading file", newFile);
+      setFileUrl("https://api.lorem.space/image/games?w=1200&h=600");
+    }
   };
 
   if (!sessionData)
@@ -93,15 +104,15 @@ export default function Editor() {
 
         <ImageUploader onUpload={handleFileChange} />
         <div>
-          <Button disabled={!saving} onClick={handleSave}>
+          <Button disabled={saving} onClick={handleSave}>
             Save
           </Button>
-          <Button disabled={!saving} onClick={handleSave}>
+          <Button disabled={saving} onClick={handlePreview}>
             Preview
           </Button>
         </div>
         <div>
-          <Button disabled={!saving} onClick={handlePublish}>
+          <Button disabled={saving} onClick={handlePublish}>
             Publish
           </Button>
         </div>
