@@ -3,14 +3,26 @@ import {
   createTRPCRouter,
   protectedAdminProcedure,
   protectedContributorProcedure,
+  protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
 
-export const postsRouter = createTRPCRouter({
+export const articlesRouter = createTRPCRouter({
   getAll: protectedAdminProcedure.query(({ ctx }) => {
-    return ctx.prisma.post.findMany();
+    return ctx.prisma.article.findMany();
   }),
 
+  getRecent: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.article.findMany({
+      take: 5,
+      where: {
+        authorId: ctx.session.user.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }),
   getBatch: publicProcedure
     .input(
       z.object({
@@ -22,7 +34,7 @@ export const postsRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const { limit, skip, categoryId, cursor } = input;
-      const items = await ctx.prisma.post.findMany({
+      const items = await ctx.prisma.article.findMany({
         take: limit + 1,
         skip: skip,
         cursor: cursor ? { id: cursor } : undefined,
@@ -50,7 +62,7 @@ export const postsRouter = createTRPCRouter({
     }),
 
   getById: publicProcedure.input(z.string()).query(({ ctx, input }) => {
-    return ctx.prisma.post.findFirst({
+    return ctx.prisma.article.findFirst({
       where: {
         id: input,
       },
@@ -61,7 +73,7 @@ export const postsRouter = createTRPCRouter({
     });
   }),
   getBySlug: publicProcedure.input(z.string()).query(({ ctx, input }) => {
-    return ctx.prisma.post.findFirst({
+    return ctx.prisma.article.findFirst({
       where: {
         published: true,
         slug: input,
@@ -76,7 +88,7 @@ export const postsRouter = createTRPCRouter({
   getBySlugContributor: protectedContributorProcedure
     .input(z.string())
     .query(({ ctx, input }) => {
-      return ctx.prisma.post.findFirst({
+      return ctx.prisma.article.findFirst({
         where: {
           authorId: ctx.session.user.id,
           slug: input,
@@ -88,14 +100,14 @@ export const postsRouter = createTRPCRouter({
       });
     }),
   getByAuthor: publicProcedure.input(z.string()).query(({ ctx, input }) => {
-    return ctx.prisma.post.findMany({
+    return ctx.prisma.article.findMany({
       where: {
         authorId: input,
       },
     });
   }),
   getByCategory: publicProcedure.input(z.string()).query(({ ctx, input }) => {
-    return ctx.prisma.post.findMany({
+    return ctx.prisma.article.findMany({
       where: {
         categories: {
           some: {
@@ -117,7 +129,7 @@ export const postsRouter = createTRPCRouter({
       })
     )
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.post.create({
+      return ctx.prisma.article.create({
         data: {
           title: input.title,
           slug: input.title
@@ -154,7 +166,7 @@ export const postsRouter = createTRPCRouter({
       ) {
         throw new Error("Not authorized");
       }
-      return ctx.prisma.post.update({
+      return ctx.prisma.article.update({
         where: {
           id: input.id,
         },
@@ -194,7 +206,7 @@ export const postsRouter = createTRPCRouter({
       ) {
         throw new Error("Not authorized");
       }
-      return ctx.prisma.post.update({
+      return ctx.prisma.article.update({
         where: {
           id: input.id,
         },
@@ -218,10 +230,56 @@ export const postsRouter = createTRPCRouter({
   delete: protectedContributorProcedure
     .input(z.string())
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.post.delete({
+      return ctx.prisma.article.delete({
         where: {
           id: input,
         },
       });
+    }),
+  getArticlesByFollowing: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number(),
+        cursor: z.string().nullish(),
+        skip: z.number().optional(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const following = await ctx.prisma.follow.findMany({
+        where: {
+          followerId: ctx.session.user.id,
+        },
+        select: {
+          followingId: true,
+        },
+      });
+      const { limit, skip, cursor } = input;
+      const items = await ctx.prisma.article.findMany({
+        take: limit + 1,
+        skip: skip,
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: {
+          createdAt: "desc",
+        },
+        where: {
+          authorId: {
+            in: following.map(({ followingId }) => followingId),
+          },
+          published: true,
+        },
+        include: {
+          author: true,
+          categories: true,
+        },
+      });
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (items.length > limit) {
+        const nextItem = items.pop();
+        nextCursor = nextItem?.id;
+      }
+      return {
+        items,
+        nextCursor,
+      };
     }),
 });

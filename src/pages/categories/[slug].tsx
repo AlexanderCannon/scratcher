@@ -7,7 +7,7 @@ import NotFound from "~/components/NotFound";
 import { List, ListItem } from "~/components/List";
 import Typography from "~/components/Typography";
 
-export default function PostPage() {
+export default function ArticlePage() {
   const { query } = useRouter();
 
   if (!query.slug) {
@@ -37,15 +37,15 @@ export default function PostPage() {
             Articles in {data.name}
           </Typography>
           <List>
-            {data.posts.map((post) => (
-              <Link href={`/posts/${post.slug}`} key={post.id}>
+            {data.articles.map((article) => (
+              <Link href={`/articles/${article.slug}`} key={article.id}>
                 <ListItem>
                   <Typography
                     as="h2"
                     variant="subheading"
                     className="m-0 cursor-pointer font-medium text-gray-400 hover:text-gray-500"
                   >
-                    {post.title}
+                    {article.title}
                   </Typography>
                 </ListItem>
               </Link>

@@ -11,7 +11,7 @@ const Layout = ({ children, title }: LayoutProps) => {
     <div className="min-h-screen bg-white">
       <Head title={title} />
       <Nav />
-      <main className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center bg-gray-100 pt-28">
+      <main className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center bg-gray-100 px-4 pt-28 md:px-8">
         {children}
       </main>
       <Footer />

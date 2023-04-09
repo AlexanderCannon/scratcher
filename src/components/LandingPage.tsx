@@ -6,7 +6,7 @@ export default function LandingPage() {
       <Typography as="h1" variant="heading">
         Welcome to Scratcher
       </Typography>
-      <Link href={"/posts"}>
+      <Link href={"/articles"}>
         <Typography variant="subheading">
           Read articles by our contributors
         </Typography>

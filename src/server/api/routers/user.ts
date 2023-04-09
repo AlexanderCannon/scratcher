@@ -17,7 +17,7 @@ export const userRouter = createTRPCRouter({
         },
       },
       include: {
-        posts: {
+        articles: {
           where: {
             published: true,
           },
@@ -41,6 +41,9 @@ export const userRouter = createTRPCRouter({
     return ctx.prisma.user.findFirst({
       where: {
         id: ctx.session.user.id,
+      },
+      include: {
+        articles: true,
       },
     });
   }),

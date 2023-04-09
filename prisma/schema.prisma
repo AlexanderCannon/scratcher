@@ -60,7 +60,11 @@ model User {
     role          UserRole  @default(USER)
     accounts      Account[]
     sessions      Session[]
-    posts         Post[]
+    articles      Article[]
+    Comment       Comment[]
+    Following     Follow[]  @relation("Follower")
+    Followers     Follow[]  @relation("Following")
+    Star          Star[]
 }
 
 model VerificationToken {
@@ -71,7 +75,7 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
-model Post {
+model Article {
     id         String     @id @default(cuid())
     title      String
     content    String
@@ -83,12 +87,49 @@ model Post {
     createdAt  DateTime   @default(now())
     updatedAt  DateTime   @updatedAt
     slug       String     @unique
+    Comment    Comment[]
+    Star       Star[]
+}
+
+model Comment {
+    id        String   @id @default(cuid())
+    content   String
+    author    User     @relation(fields: [authorId], references: [id])
+    article   Article  @relation(fields: [articleId], references: [id])
+    authorId  String
+    articleId String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Follow {
+    id          String   @id @default(cuid())
+    follower    User     @relation("Follower", fields: [followerId], references: [id])
+    following   User     @relation("Following", fields: [followingId], references: [id])
+    followerId  String
+    followingId String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@unique([followerId, followingId])
+}
+
+model Star {
+    id        String   @id @default(cuid())
+    article   Article  @relation(fields: [articleId], references: [id])
+    articleId String
+    owner     User     @relation(fields: [userId], references: [id])
+    userId    String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([articleId, userId])
 }
 
 model Category {
-    id          String  @id @default(cuid())
-    name        String  @unique
-    slug        String  @unique
+    id          String    @id @default(cuid())
+    name        String    @unique
+    slug        String    @unique
     description String?
-    posts       Post[]
+    articles    Article[]
 }

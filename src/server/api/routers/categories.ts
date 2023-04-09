@@ -58,7 +58,7 @@ export const categoriesRouter = createTRPCRouter({
         slug: input,
       },
       include: {
-        posts: true,
+        articles: true,
       },
     });
   }),

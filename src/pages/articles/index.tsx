@@ -9,11 +9,11 @@ import { List, ListItem } from "~/components/List";
 import Typography from "~/components/Typography";
 import NotFound from "~/components/NotFound";
 
-export default function PostPage() {
+export default function ArticlePage() {
   const router = useRouter();
   const [page, setPage] = useState(Number(router.query.page ?? 0));
   const { data, fetchNextPage, isLoading, isFetchingNextPage } =
-    api.posts.getBatch.useInfiniteQuery(
+    api.articles.getBatch.useInfiniteQuery(
       {
         limit: 10,
       },
@@ -24,9 +24,9 @@ export default function PostPage() {
 
   useEffect(() => {
     if (page === 0) {
-      void router.push("/posts");
+      void router.push("/articles");
     } else {
-      void router.push(`/posts?page=${page}`);
+      void router.push(`/articles?page=${page}`);
     }
   }, [page]);
 
@@ -56,14 +56,14 @@ export default function PostPage() {
   return (
     <Layout>
       <Typography as="h1" variant="heading">
-        Posts
+        Articles
       </Typography>
       <List>
         {isLoading || isFetchingNextPage ? (
           <Loading />
         ) : (
-          currentPage.map((post) => (
-            <Link href={`/posts/${post.slug}`} key={post.id}>
+          currentPage.map((article) => (
+            <Link href={`/articles/${article.slug}`} key={article.id}>
               <ListItem>
                 <div className="w-2/3">
                   <Typography
@@ -71,7 +71,7 @@ export default function PostPage() {
                     variant="subheading"
                     className="ml-3 cursor-pointer font-medium text-gray-400 hover:text-gray-500"
                   >
-                    {post.title}
+                    {article.title}
                   </Typography>
                 </div>
               </ListItem>

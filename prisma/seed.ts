@@ -80,7 +80,7 @@ async function main() {
       const cat3 = categories[
         Math.floor(Math.random() * categories.length)
       ] as Category;
-      await prisma.post.create({
+      await prisma.article.create({
         data: {
           title: faker.lorem.sentence(),
           content: faker.lorem.paragraphs(
@@ -94,7 +94,7 @@ async function main() {
           },
         },
       });
-      await prisma.post.create({
+      await prisma.article.create({
         data: {
           title: faker.lorem.sentence(),
           content: faker.lorem.paragraphs(),
@@ -106,7 +106,7 @@ async function main() {
           },
         },
       });
-      await prisma.post.create({
+      await prisma.article.create({
         data: {
           title: faker.lorem.sentence(),
           content: faker.lorem.paragraphs(),

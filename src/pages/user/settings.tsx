@@ -9,6 +9,7 @@ import Layout from "~/components/Layout";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
 import Toast from "~/components/Toast";
+import Card from "~/components/Card";
 
 interface FormErrors {
   name?: string;
@@ -31,6 +32,7 @@ export default function SettingsPage() {
   const [phone, setPhone] = useState<string>(user?.phone ?? "");
   const [username, setUsername] = useState<string>(user?.username ?? "");
   const [slug, setSlug] = useState<string>(user?.slug ?? "");
+  const [slugDirty, setSlugDirty] = useState<boolean>(!!user?.slug);
   const [image, setImage] = useState<string>(user?.image ?? "");
   const [saving, setSaving] = useState<boolean>(false);
   const [showToast, setShowToast] = useState<boolean>(false);
@@ -47,10 +49,31 @@ export default function SettingsPage() {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (username && !slugDirty) {
+      guessSlug();
+    }
+  }, [username]);
+
+  const handleSlugChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSlugDirty(true);
+    setSlug(event.target.value);
+  };
+
   const handleChange =
     (setter: Dispatch<SetStateAction<string>>) =>
     (event: ChangeEvent<HTMLInputElement>) =>
       setter(event.target.value);
+
+  const guessSlug = () => {
+    if (username) {
+      const derivedSlug = username
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)+/g, "");
+      setSlug(derivedSlug);
+    }
+  };
 
   const handleImageUpload = ([file]: File[]) => {
     if (file) {
@@ -147,108 +170,110 @@ export default function SettingsPage() {
           <span className="block sm:inline">{formErrors.form}</span>
         </div>
       )}
-      <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div className="mb-4 flex flex-col">
-            <label htmlFor="name" className="mb-2 font-medium text-gray-800">
-              Name
-            </label>
-            <Input
-              type="text"
-              id="name"
-              name="name"
-              value={name}
-              onChange={handleChange(setName)}
-              className={formErrors.name ? "border-red-500" : ""}
-            />
-            {formErrors.name && (
-              <p className="mt-1 text-sm text-red-500">{formErrors.name}</p>
-            )}
+      <Card>
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="mb-4 flex flex-col">
+              <label htmlFor="name" className="mb-2 font-medium text-gray-800">
+                Name
+              </label>
+              <Input
+                type="text"
+                id="name"
+                name="name"
+                value={name}
+                onChange={handleChange(setName)}
+                className={formErrors.name ? "border-red-500" : ""}
+              />
+              {formErrors.name && (
+                <p className="mt-1 text-sm text-red-500">{formErrors.name}</p>
+              )}
+            </div>
+            <div className="mb-4 flex flex-col">
+              <label htmlFor="email" className="mb-2 font-medium text-gray-800">
+                Email
+              </label>
+              <Input
+                type="email"
+                id="email"
+                name="email"
+                value={email}
+                onChange={handleChange(setEmail)}
+                className={formErrors.name ? "border-red-500" : ""}
+              />
+              {formErrors.email && (
+                <p className="mt-1 text-sm text-red-500">{formErrors.email}</p>
+              )}
+            </div>
+            <div className="mb-4 flex flex-col">
+              <label htmlFor="name" className="mb-2 font-medium text-gray-800">
+                Username
+              </label>
+              <Input
+                type="text"
+                id="name"
+                name="name"
+                value={username}
+                onChange={handleChange(setUsername)}
+                className={formErrors.username ? "border-red-500" : ""}
+              />
+              {formErrors.name && (
+                <p className="mt-1 text-sm text-red-500">{formErrors.name}</p>
+              )}
+            </div>
+            <div className="mb-4 flex flex-col">
+              <label htmlFor="name" className="mb-2 font-medium text-gray-800">
+                Unique link
+              </label>
+              <Input
+                type="text"
+                id="name"
+                name="name"
+                value={slug}
+                onChange={handleSlugChange}
+                className={formErrors.slug ? "border-red-500" : ""}
+              />
+              {formErrors.name && (
+                <p className="mt-1 text-sm text-red-500">{formErrors.name}</p>
+              )}
+            </div>
+            <div className="mb-4 flex flex-col">
+              <label htmlFor="phone" className="mb-2 font-medium text-gray-800">
+                Phone
+              </label>
+              <Input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={phone}
+                onChange={handleChange(setPhone)}
+                className={formErrors.name ? "border-red-500" : ""}
+              />
+              {formErrors.phone && (
+                <p className="mt-1 text-sm text-red-500">{formErrors.phone}</p>
+              )}
+            </div>
+            <div className="mb-4 flex flex-col">
+              <label htmlFor="image" className="mb-2 font-medium text-gray-800">
+                Profile Image
+              </label>
+              <ImageUploader
+                placeHolder={!!image ? "Upload new image" : "Upload image"}
+                onUpload={handleImageUpload}
+                className={formErrors.image ? "border-red-500" : ""}
+              />
+              {formErrors.image && (
+                <p className="mt-1 text-sm text-red-500">{formErrors.image}</p>
+              )}
+            </div>
           </div>
-          <div className="mb-4 flex flex-col">
-            <label htmlFor="email" className="mb-2 font-medium text-gray-800">
-              Email
-            </label>
-            <Input
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              onChange={handleChange(setEmail)}
-              className={formErrors.name ? "border-red-500" : ""}
-            />
-            {formErrors.email && (
-              <p className="mt-1 text-sm text-red-500">{formErrors.email}</p>
-            )}
+          <div className="mb-4 mt-6 flex flex-col">
+            <Button type="submit" fullWidth disabled={saving}>
+              Save Changes
+            </Button>
           </div>
-          <div className="mb-4 flex flex-col">
-            <label htmlFor="name" className="mb-2 font-medium text-gray-800">
-              Username
-            </label>
-            <Input
-              type="text"
-              id="name"
-              name="name"
-              value={username}
-              onChange={handleChange(setUsername)}
-              className={formErrors.username ? "border-red-500" : ""}
-            />
-            {formErrors.name && (
-              <p className="mt-1 text-sm text-red-500">{formErrors.name}</p>
-            )}
-          </div>
-          <div className="mb-4 flex flex-col">
-            <label htmlFor="name" className="mb-2 font-medium text-gray-800">
-              Unique link
-            </label>
-            <Input
-              type="text"
-              id="name"
-              name="name"
-              value={slug}
-              onChange={handleChange(setSlug)}
-              className={formErrors.slug ? "border-red-500" : ""}
-            />
-            {formErrors.name && (
-              <p className="mt-1 text-sm text-red-500">{formErrors.name}</p>
-            )}
-          </div>
-          <div className="mb-4 flex flex-col">
-            <label htmlFor="phone" className="mb-2 font-medium text-gray-800">
-              Phone
-            </label>
-            <Input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={phone}
-              onChange={handleChange(setPhone)}
-              className={formErrors.name ? "border-red-500" : ""}
-            />
-            {formErrors.phone && (
-              <p className="mt-1 text-sm text-red-500">{formErrors.phone}</p>
-            )}
-          </div>
-          <div className="mb-4 flex flex-col">
-            <label htmlFor="image" className="mb-2 font-medium text-gray-800">
-              Profile Image
-            </label>
-            <ImageUploader
-              placeHolder={!!image ? "Upload new image" : "Upload image"}
-              onUpload={handleImageUpload}
-              className={formErrors.image ? "border-red-500" : ""}
-            />
-            {formErrors.image && (
-              <p className="mt-1 text-sm text-red-500">{formErrors.image}</p>
-            )}
-          </div>
-        </div>
-        <div className="mb-4 mt-6 flex flex-col">
-          <Button type="submit" fullWidth disabled={saving}>
-            Save Changes
-          </Button>
-        </div>
-      </form>
+        </form>
+      </Card>
       <Toast
         visible={showToast}
         message="Settings saved successfully!"

@@ -3,9 +3,9 @@ import { api } from "../../utils/api";
 import Layout from "~/components/Layout";
 import Loading from "~/components/Loading";
 import NotFound from "~/components/NotFound";
-import BlogPost from "~/components/BlogPost";
+import Article from "~/components/Article";
 
-export default function PostPage() {
+export default function ArticlePage() {
   const { query } = useRouter();
 
   if (!query.slug) {
@@ -17,7 +17,7 @@ export default function PostPage() {
   }
   const slug =
     typeof query.slug === "string" ? query.slug : query.slug.join(", ");
-  const { data, isLoading } = api.posts.getBySlug.useQuery(slug);
+  const { data, isLoading } = api.articles.getBySlug.useQuery(slug);
   if (isLoading) {
     return (
       <Layout>
@@ -34,7 +34,7 @@ export default function PostPage() {
   }
   return (
     <Layout>
-      <BlogPost
+      <Article
         image={
           data.image ?? "https://api.lorem.space/image/furniture?w=1200&h=600"
         }

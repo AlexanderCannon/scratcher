@@ -1,7 +1,7 @@
 import Image, { type StaticImageData } from "next/image";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "~/components/Link";
-import Logo from "../../public/images/svg/logo-black.svg";
+import Logo from "../../public/images/svg/logo-no-background.svg";
 import Typography from "./Typography";
 import Button from "./Button";
 
@@ -23,16 +23,16 @@ export default function Nav() {
         <div className="flex h-16 justify-between align-middle">
           <div className="flex">
             <div className="flex flex-shrink-0 items-center">
-              <Link href="/">
+              <Link href="/" className="rounded">
                 <Image
-                  className="mr-2 h-10 w-10 rounded-full lg:hidden"
+                  className="h-10 w-10 rounded-full lg:hidden"
                   src={sessionData?.user.image ?? logo}
                   width={40}
                   height={40}
                   alt="Logo"
                 />
                 <Image
-                  className="hidden h-16 w-auto lg:block"
+                  className="hidden h-12 w-auto lg:block"
                   src={logo}
                   alt="Logo"
                 />

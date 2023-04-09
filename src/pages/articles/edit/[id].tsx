@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { Category } from "@prisma/client";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
+import { Category } from "@prisma/client";
 import Layout from "~/components/Layout";
 import { api } from "~/utils/api";
 import MarkdownEditor from "~/components/MarkdownEditor";
@@ -10,27 +11,50 @@ import ImageUploader from "~/components/ImageUploader";
 import Button from "~/components/Button";
 import Select from "~/components/Select";
 import Loading from "~/components/Loading";
+import format from "date-fns/format";
 
 export default function Editor() {
+  const { query } = useRouter();
+
+  if (!query.id) {
+    return (
+      <Layout>
+        <NotFound />
+      </Layout>
+    );
+  }
+  const id = typeof query.id === "string" ? query.id : query.id.join(", ");
+  const { data: articleData, isLoading } = api.articles.getById.useQuery(id, {
+    staleTime: Infinity,
+  });
   const { data: categoryData } = api.categories.getAll.useQuery(undefined, {
     staleTime: Infinity,
   });
   const { data: sessionData } = useSession();
-  const router = useRouter();
+
+  useEffect(() => {
+    const initialCategories = articleData?.categories ?? ([] as Category[]);
+    setTitle(articleData?.title ?? "");
+    setContent(articleData?.content ?? "");
+    setFileUrl(articleData?.image ?? "");
+    setPublished(articleData?.published ?? false);
+    setArticleCategories(initialCategories);
+  }, [articleData]);
 
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [fileUrl, setFileUrl] = useState<string>();
   const [articleCategories, setArticleCategories] = useState<Category[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
+  const [published, setPublished] = useState<boolean>(false);
 
-  const createPost = api.posts.create.useMutation();
-
-  const savePost = async (publish = false) => {
+  const updateArticle = api.articles.update.useMutation();
+  const saveArticle = async (publish = false) => {
     setSaving(true);
-    createPost.mutate(
+    updateArticle.mutate(
       {
         authorId: sessionData?.user.id ?? "",
+        id: articleData?.id ?? "",
         title,
         content,
         image: fileUrl,
@@ -38,8 +62,7 @@ export default function Editor() {
         published: publish,
       },
       {
-        onSuccess: (data) => {
-          router.push(`/posts/editor/${data.id}`);
+        onSuccess: () => {
           setSaving(false);
         },
         onError: (error) => {
@@ -53,35 +76,55 @@ export default function Editor() {
     );
   };
 
-  const handleSave = () => savePost(false);
-
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
 
   const handlePublish = () => {
-    savePost(true);
+    setPublished(!published);
+    saveArticle(!articleData?.published);
   };
 
+  const handleSave = () => saveArticle(articleData?.published ?? false);
+
   const handlePreview = () => {
-    return "please save your post first";
+    window.open(
+      `/articles/preview/${articleData?.slug}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
   };
 
   const handleFileChange = ([newFile]: File[]) => {
     if (newFile) {
       console.log("uploading file", newFile);
-      setFileUrl("https://api.lorem.space/image/games?w=1200&h=600");
+      setFileUrl("https://api.lorem.space/image/furniture?w=1200&h=600");
     }
   };
 
-  if (!sessionData)
+  if (!sessionData || !id) {
     return (
       <Layout>
         <NotFound />
       </Layout>
     );
+  }
+
+  if (!articleData || isLoading) {
+    return (
+      <Layout>
+        <Loading />
+      </Layout>
+    );
+  }
   return (
-    <Layout title="Create a post">
+    <Layout title="Edit your article">
+      <pre>{articleData.published ? "Published" : "Draft"}</pre>{" "}
+      <pre>
+        Created on {format(articleData.createdAt, "MMMM do yy")}, last updated
+        on{" "}
+        {format(articleData.createdAt || articleData.createdAt, "MMMM do yy")}
+      </pre>
       <input
         onChange={handleTitleChange}
         value={title}
@@ -92,6 +135,7 @@ export default function Editor() {
       <div className="bg- sticky top-16 z-40 w-full bg-white shadow">
         {categoryData ? (
           <Select
+            initialValue={articleCategories}
             placeholder="Select categories"
             onChange={setArticleCategories}
             options={categoryData}
@@ -101,8 +145,12 @@ export default function Editor() {
         ) : (
           <Loading />
         )}
-
-        <ImageUploader onUpload={handleFileChange} />
+        <ImageUploader
+          onUpload={handleFileChange}
+          placeHolder={
+            articleData.image ? "Replace your image" : "Add a cover photo"
+          }
+        />
         <div>
           <Button disabled={saving} onClick={handleSave}>
             Save
@@ -113,11 +161,25 @@ export default function Editor() {
         </div>
         <div>
           <Button disabled={saving} onClick={handlePublish}>
-            Publish
+            {published ? "Un-publish" : "Publish"}
           </Button>
         </div>
       </div>
-      <MarkdownEditor setContent={setContent} />
+      {articleData.image && !fileUrl && (
+        <Image
+          src={articleData.image}
+          alt="heading image"
+          width={1200}
+          height={600}
+        />
+      )}
+      {fileUrl && (
+        <Image src={fileUrl} alt="heading image" width={1200} height={600} />
+      )}
+      <MarkdownEditor
+        setContent={setContent}
+        initialContent={articleData.content}
+      />
     </Layout>
   );
 }
