@@ -1,58 +1,68 @@
+import { useState } from "react";
 import { useRouter } from "next/router";
-import Link from "~/components/Link";
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout";
 import Loading from "~/components/Loading";
-import NotFound from "~/components/NotFound";
-import { List, ListItem } from "~/components/List";
+import { List } from "~/components/List";
 import Typography from "~/components/Typography";
+import PaginationButtons from "~/components/PaginationButtons";
+import ArticleList from "~/components/ArticleList";
+import { getFromQuery } from "~/utils/getFromQuery";
 
 export default function ArticlePage() {
+  const [page, setPage] = useState(0);
   const { query } = useRouter();
+  const slug = getFromQuery(query.slug);
+  const { data: categoryData } = api.categories.getBySlug.useQuery(slug);
+  const { data, fetchNextPage, isLoading } =
+    api.articles.getByCategory.useInfiniteQuery(
+      {
+        categoryId: categoryData?.id,
+        limit: 10,
+      },
+      {
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      }
+    );
 
-  if (!query.slug) {
-    return (
-      <Layout>
-        <NotFound />
-      </Layout>
-    );
-  }
-  const slug =
-    typeof query.slug === "string" ? query.slug : query.slug.join(", ");
-  const { data, isLoading } = api.categories.getBySlug.useQuery(slug);
-  if (!data) {
-    return (
-      <Layout>
-        <NotFound />
-      </Layout>
-    );
-  }
+  const handleFetchNextPage = () => {
+    const [page, setPage] = useState(0);
+    fetchNextPage()
+      .then(() => {
+        setPage((prev) => prev + 1);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  const handleFetchPreviousPage = () => {
+    if (page === 0) return;
+    setPage((prev) => prev - 1);
+  };
+
+  const currentPage = data?.pages[page]?.items;
+  const nextCursor = data?.pages[page]?.nextCursor;
   return (
     <Layout>
-      {isLoading ? (
+      {isLoading || !currentPage ? (
         <Loading />
       ) : (
         <>
-          <Typography as="h1" variant="heading">
-            Articles in {data.name}
+          <Typography as="h1" variant="heading" className="mb-10">
+            Articles in {categoryData?.name}
           </Typography>
           <List>
-            {data.articles.map((article) => (
-              <Link href={`/articles/${article.slug}`} key={article.id}>
-                <ListItem>
-                  <Typography
-                    as="h2"
-                    variant="subheading"
-                    className="m-0 cursor-pointer font-medium text-gray-400 hover:text-gray-500"
-                  >
-                    {article.title}
-                  </Typography>
-                </ListItem>
-              </Link>
-            ))}
+            <ArticleList articles={currentPage} />
           </List>
         </>
       )}
+      <PaginationButtons
+        page={page}
+        nextCursor={nextCursor}
+        handleFetchNextPage={handleFetchNextPage}
+        handleFetchPreviousPage={handleFetchPreviousPage}
+      />
     </Layout>
   );
 }

@@ -110,17 +110,56 @@ export const articlesRouter = createTRPCRouter({
       },
     });
   }),
-  getByCategory: publicProcedure.input(z.string()).query(({ ctx, input }) => {
-    return ctx.prisma.article.findMany({
-      where: {
-        categories: {
-          some: {
-            id: input,
-          },
+
+  getByCategory: publicProcedure
+    .input(
+      z.object({
+        limit: z.number(),
+        cursor: z.string().nullish(),
+        skip: z.number().optional(),
+        categoryId: z.string().optional(),
+        categorySlug: z.string().optional(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const {
+        limit,
+        skip,
+        cursor,
+        categoryId: category,
+        categorySlug: slug,
+      } = input;
+      const items = await ctx.prisma.article.findMany({
+        take: limit + 1,
+        skip: skip,
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: {
+          createdAt: "desc",
         },
-      },
-    });
-  }),
+        where: {
+          categories: {
+            some: {
+              id: category,
+              slug: slug,
+            },
+          },
+          published: true,
+        },
+        include: {
+          author: true,
+        },
+      });
+
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (items.length > limit) {
+        const nextItem = items.pop();
+        nextCursor = nextItem?.id;
+      }
+      return {
+        items,
+        nextCursor,
+      };
+    }),
   create: protectedContributorProcedure
     .input(
       z.object({

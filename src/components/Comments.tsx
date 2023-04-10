@@ -17,7 +17,7 @@ export default function Comments({ articleId }: CommentsProps) {
   const { data: sessionData } = useSession();
   const createComment = api.comments.createComment.useMutation();
 
-  const { data, fetchNextPage, isLoading, isFetchingNextPage } =
+  const { data, fetchNextPage} =
     api.comments.getComments.useInfiniteQuery(
       {
         articleId,
