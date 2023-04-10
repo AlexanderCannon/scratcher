@@ -4,7 +4,7 @@ import { type ChangeEvent, type FormEvent, type Dispatch } from "react";
 import Image from "next/image";
 import { api } from "~/utils/api";
 import NotFound from "~/components/NotFound";
-import ImageUploader from "~/components/ImageUploader";
+import ImageUploader from "~/components/PhotoPicker";
 import Layout from "~/components/Layout";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
@@ -259,7 +259,7 @@ export default function SettingsPage() {
               </label>
               <ImageUploader
                 placeHolder={!!image ? "Upload new image" : "Upload image"}
-                onUpload={handleImageUpload}
+                onSelect={handleImageUpload}
                 className={formErrors.image ? "border-red-500" : ""}
               />
               {formErrors.image && (

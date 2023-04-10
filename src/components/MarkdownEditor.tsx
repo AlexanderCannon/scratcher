@@ -31,7 +31,7 @@ export default function MarkdownEditor({
   return (
     <MdEditor
       value={value}
-      className="h-full w-full flex-grow"
+      className="h-full min-h-screen w-full flex-grow"
       renderHTML={(text) => mdParser.render(text)}
       onChange={handleEditorChange}
     />

@@ -7,7 +7,7 @@ import { api } from "~/utils/api";
 import MarkdownEditor from "~/components/MarkdownEditor";
 import { useSession } from "next-auth/react";
 import NotFound from "~/components/NotFound";
-import ImageUploader from "~/components/ImageUploader";
+import PhotoPicker from "~/components/PhotoPicker";
 import Button from "~/components/Button";
 import Select from "~/components/Select";
 import Loading from "~/components/Loading";
@@ -49,7 +49,7 @@ export default function Editor() {
   const [published, setPublished] = useState<boolean>(false);
 
   const updateArticle = api.articles.update.useMutation();
-  const saveArticle = async (publish = false) => {
+  const saveArticle = async () => {
     setSaving(true);
     updateArticle.mutate(
       {
@@ -59,7 +59,7 @@ export default function Editor() {
         content,
         image: fileUrl,
         categories: articleCategories.map(({ id }) => id),
-        published: publish,
+        published,
       },
       {
         onSuccess: () => {
@@ -82,12 +82,13 @@ export default function Editor() {
 
   const handlePublish = () => {
     setPublished(!published);
-    saveArticle(!articleData?.published);
+    saveArticle();
   };
 
-  const handleSave = () => saveArticle(articleData?.published ?? false);
+  const handleSave = () => saveArticle();
 
-  const handlePreview = () => {
+  const handlePreview = async () => {
+    await saveArticle();
     window.open(
       `/articles/preview/${articleData?.slug}`,
       "_blank",
@@ -95,11 +96,8 @@ export default function Editor() {
     );
   };
 
-  const handleFileChange = ([newFile]: File[]) => {
-    if (newFile) {
-      console.log("uploading file", newFile);
-      setFileUrl("https://api.lorem.space/image/furniture?w=1200&h=600");
-    }
+  const handleFileChange = (url: string) => {
+    setFileUrl(url);
   };
 
   if (!sessionData || !id) {
@@ -145,8 +143,8 @@ export default function Editor() {
         ) : (
           <Loading />
         )}
-        <ImageUploader
-          onUpload={handleFileChange}
+        <PhotoPicker
+          onSelect={handleFileChange}
           placeHolder={
             articleData.image ? "Replace your image" : "Add a cover photo"
           }

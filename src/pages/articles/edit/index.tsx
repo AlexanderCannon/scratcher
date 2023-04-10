@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Category } from "@prisma/client";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import Layout from "~/components/Layout";
 import { api } from "~/utils/api";
 import MarkdownEditor from "~/components/MarkdownEditor";
 import { useSession } from "next-auth/react";
 import NotFound from "~/components/NotFound";
-import ImageUploader from "~/components/ImageUploader";
+import PhotoPicker from "~/components/PhotoPicker";
 import Button from "~/components/Button";
 import Select from "~/components/Select";
 import Loading from "~/components/Loading";
@@ -20,7 +21,7 @@ export default function Editor() {
 
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
-  const [fileUrl, setFileUrl] = useState<string>();
+  const [image, setImage] = useState<string>();
   const [articleCategories, setArticleCategories] = useState<Category[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
 
@@ -33,7 +34,7 @@ export default function Editor() {
         authorId: sessionData?.user.id ?? "",
         title,
         content,
-        image: fileUrl,
+        image,
         categories: articleCategories.map(({ id }) => id),
         published: publish,
       },
@@ -67,11 +68,8 @@ export default function Editor() {
     return "please save your article first";
   };
 
-  const handleFileChange = ([newFile]: File[]) => {
-    if (newFile) {
-      console.log("uploading file", newFile);
-      setFileUrl("https://api.lorem.space/image/games?w=1200&h=600");
-    }
+  const handleFileChange = (url: string) => {
+    setImage(url);
   };
 
   if (!sessionData)
@@ -81,7 +79,7 @@ export default function Editor() {
       </Layout>
     );
   return (
-    <Layout title="Create a article">
+    <Layout title="Create an article">
       <input
         onChange={handleTitleChange}
         value={title}
@@ -102,7 +100,7 @@ export default function Editor() {
           <Loading />
         )}
 
-        <ImageUploader onUpload={handleFileChange} />
+        <PhotoPicker onSelect={handleFileChange} />
         <div>
           <Button disabled={saving} onClick={handleSave}>
             Save
@@ -117,6 +115,9 @@ export default function Editor() {
           </Button>
         </div>
       </div>
+      {image && (
+        <Image src={image} width={990} height={495} alt="selected image" />
+      )}
       <MarkdownEditor setContent={setContent} />
     </Layout>
   );
