@@ -8,7 +8,6 @@ import html from "remark-html";
 import Typography from "./Typography";
 import Loading from "./Loading";
 import Comments from "./Comments";
-import placeholderUser from "../../public/images/png/placeholder-user.png";
 
 interface ArticleProps {
   id: string;
@@ -55,7 +54,7 @@ const Article = ({
       <Link href={`/contributors/${author.slug ?? ""}`} padding="p-0">
         <div className="mb-2 flex items-center">
           <Image
-            src={author.image ?? placeholderUser}
+            src={author.image ?? "/images/png/placeholder-user.png"}
             alt={author.name ?? "Mr. Cool"}
             width={40}
             height={40}

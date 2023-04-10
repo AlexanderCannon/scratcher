@@ -4,7 +4,6 @@ import Image from "next/image";
 import Layout from "~/components/Layout";
 import { api } from "~/utils/api";
 import NotFound from "~/components/NotFound";
-import placeholderUser from "../../public/images/png/placeholder-user.png";
 
 export default function FollowingPage() {
   const session = useSession();
@@ -29,7 +28,7 @@ export default function FollowingPage() {
                       height={10}
                       width={10}
                       className="h-10 w-10 rounded-full"
-                      src={user.image ?? placeholderUser}
+                      src={user.image ?? "/images/png/placeholder-user.png"}
                       alt=""
                     />
                   </div>

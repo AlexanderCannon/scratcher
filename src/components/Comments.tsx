@@ -7,7 +7,6 @@ import Button from "./Button";
 import { TextArea } from "./Input";
 import Image from "next/image";
 import Card from "./Card";
-import placeholderUser from "../../public/images/png/placeholder-user.png";
 
 interface CommentsProps {
   articleId: string;
@@ -111,7 +110,9 @@ export default function Comments({ articleId }: CommentsProps) {
             <li key={comment.id}>
               <Card className="mb-4">
                 <Image
-                  src={comment.author.image ?? placeholderUser}
+                  src={
+                    comment.author.image ?? "/images/png/placeholder-user.png"
+                  }
                   alt={(comment.author.username || comment.author.name) ?? ""}
                   width={40}
                   height={40}
