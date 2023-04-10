@@ -7,6 +7,7 @@ import Loading from "~/components/Loading";
 import { Article } from "@prisma/client";
 import { List, ListItem } from "~/components/List";
 import Typography from "~/components/Typography";
+import placeholderUser from "../../public/images/png/placeholder-user.png";
 
 const ContributorPage = () => {
   const { data, isLoading } = api.user.get.useQuery();
@@ -28,8 +29,8 @@ const ContributorPage = () => {
         <>
           <Image
             className="rounded-full"
-            src={user.image ?? "https://api.lorem.space/image/face?w=50&h=50"}
-            alt={user.name ?? ""}
+            src={user.image ?? placeholderUser}
+            alt={user.name ?? "placeholder"}
             width={100}
             height={100}
           />

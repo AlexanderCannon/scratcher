@@ -36,9 +36,7 @@ export default function ArticlePage() {
   return (
     <Layout>
       <Article
-        image={
-          data.image ?? "https://api.lorem.space/image/furniture?w=1200&h=600"
-        }
+        image={data.image || undefined}
         title={data.title}
         content={data.content}
         author={data.author}

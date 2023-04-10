@@ -12,6 +12,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { BiMinusCircle, BiPlusCircle } from "react-icons/bi";
 import Button from "~/components/Button";
+import placeholderUser from "../../public/images/png/placeholder-user.png";
 
 const ContributorPage = () => {
   const { query } = useRouter();
@@ -72,7 +73,7 @@ const ContributorPage = () => {
         <>
           <Image
             className="rounded-full"
-            src={user.image ?? "https://api.lorem.space/image/face?w=50&h=50"}
+            src={user.image ?? placeholderUser}
             alt={user.name ?? ""}
             width={100}
             height={100}

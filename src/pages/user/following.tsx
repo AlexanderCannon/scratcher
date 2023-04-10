@@ -3,6 +3,8 @@ import { useSession } from "next-auth/react";
 import Layout from "~/components/Layout";
 import { api } from "~/utils/api";
 import NotFound from "~/components/NotFound";
+import placeholderUser from "../../public/images/png/placeholder-user.png";
+import Image from "next/image";
 
 export default function FollowingPage() {
   const session = useSession();
@@ -24,12 +26,9 @@ export default function FollowingPage() {
               <li key={user.id} className="py-4">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <img
+                    <Image
                       className="h-10 w-10 rounded-full"
-                      src={
-                        user.image ??
-                        "https://api.lorem.space/image/face?w=50&h=50"
-                      }
+                      src={user.image ?? placeholderUser}
                       alt=""
                     />
                   </div>

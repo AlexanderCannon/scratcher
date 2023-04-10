@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Article, User, Category } from "@prisma/client";
 import Typography from "./Typography";
 import Link from "./Link";
+import placeholderUser from "../../public/images/png/placeholder-user.png";
 
 interface FeedItemProps {
   article: Article & {
@@ -20,11 +21,8 @@ export default function FeedItem({ article }: FeedItemProps) {
             width={50}
             height={50}
             className="rounded-full"
-            src={
-              article.author.image ??
-              "https://api.lorem.space/image/face?w=50&h=50"
-            }
-            alt={article.author.name ?? ""}
+            src={article.author.image ?? placeholderUser}
+            alt={article.author.name ?? "placeholder"}
           />
           <div className="ml-3 flex flex-col">
             <Typography className="font-bold">{article.author.name}</Typography>

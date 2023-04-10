@@ -7,6 +7,7 @@ import { remark } from "remark";
 import html from "remark-html";
 import Typography from "./Typography";
 import Loading from "./Loading";
+import placeholderUser from "../../public/images/png/placeholder-user.png";
 
 interface ArticleProps {
   title: string;
@@ -49,7 +50,7 @@ const Article = ({
       <Link href={author.slug ?? ""} padding="p-0">
         <div className="mb-2 flex items-center">
           <Image
-            src={author.image ?? "https://api.lorem.space/image/face?w=50&h=50"}
+            src={author.image ?? placeholderUser}
             alt={author.name ?? "Mr. Cool"}
             width={40}
             height={40}
