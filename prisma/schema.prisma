@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-    provider = "postgres"
-    url      = env("DATABASE_URL")
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
 model Example {
@@ -78,7 +79,7 @@ model VerificationToken {
 model Article {
     id         String     @id @default(cuid())
     title      String
-    content    String
+    content    String     @db.Text
     image      String?
     published  Boolean    @default(false)
     author     User       @relation(fields: [authorId], references: [id])
