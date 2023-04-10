@@ -49,18 +49,12 @@ const Contributors = () => {
 
   const currentPage = data?.pages[page]?.items;
   const nextCursor = data?.pages[page]?.nextCursor;
-  if (!currentPage)
-    return (
-      <Layout>
-        <NotFound />
-      </Layout>
-    );
   return (
     <Layout>
       <Typography as="h1" variant="heading">
         Our brilliant authors
       </Typography>
-      {isLoading || isFetchingNextPage ? (
+      {isLoading || isFetchingNextPage || !currentPage ? (
         <Loading />
       ) : (
         <>

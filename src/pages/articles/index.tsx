@@ -47,19 +47,13 @@ export default function ArticlePage() {
 
   const currentPage = data?.pages[page]?.items;
   const nextCursor = data?.pages[page]?.nextCursor;
-  if (!currentPage)
-    return (
-      <Layout>
-        <NotFound />
-      </Layout>
-    );
   return (
     <Layout>
       <Typography as="h1" variant="heading">
         Articles
       </Typography>
       <List>
-        {isLoading || isFetchingNextPage ? (
+        {isLoading || isFetchingNextPage || !currentPage ? (
           <Loading />
         ) : (
           currentPage.map((article) => (
