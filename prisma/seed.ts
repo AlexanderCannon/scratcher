@@ -101,6 +101,7 @@ async function main() {
           slug: faker.lorem.slug(),
           published: true,
           authorId: user.id,
+          image: faker.image.imageUrl(1200, 600),
           categories: {
             connect: [{ id: cat2.id }],
           },

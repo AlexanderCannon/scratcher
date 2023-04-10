@@ -10,7 +10,7 @@ import Loading from "./Loading";
 
 interface ArticleProps {
   title: string;
-  image: string;
+  image?: string;
   author: User;
   date: Date;
   content: string;
@@ -41,7 +41,7 @@ const Article = ({
   return (
     <div className="mx-auto max-w-5xl px-4">
       <div className="mb-8">
-        <Image src={image} alt={title} width={1200} height={600} />
+        {image && <Image src={image} alt={title} width={1200} height={600} />}
       </div>
       <Typography as="h1" variant="heading" className="mb-2">
         {title}
