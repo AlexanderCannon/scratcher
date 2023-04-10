@@ -15,7 +15,6 @@ export default function FollowingPage() {
         <NotFound />
       </Layout>
     );
-  console.log("following", following);
   return (
     <Layout>
       <div className="mx-auto max-w-3xl px-4 py-8">

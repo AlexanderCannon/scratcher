@@ -47,26 +47,34 @@ async function main() {
         slug: name
           .toLocaleLowerCase()
           .replaceAll(" ", "-")
-          .replaceAll(/\./g, ""),
+          .replaceAll(/[\;\,\/\?\:\@\&\=\+\$\_\.!\~\*\'\(\)\#]/g, ""),
       },
     });
     return category;
   });
 
   const categories = await Promise.all(categoryPromises);
-
+  const userIds = [] as string[];
   for (let i = 0; i < amountOfUsers; i++) {
     const role = selectUserRole(i % 25);
-    const name = faker.name.fullName();
+    const firstName = faker.name.firstName();
+    const lastName = faker.name.lastName();
+    const name = `${firstName} ${lastName}`;
     const user = await prisma.user.create({
       data: {
         name: name,
         role: role,
-        email: faker.internet.email(name),
-        username: faker.internet.userName(name),
-        slug: name.replaceAll(" ", "-").toLocaleLowerCase(),
+        email: faker.internet.email(),
+        username: faker.internet.userName(firstName, lastName),
+        slug: name
+          .toLocaleLowerCase()
+          .replaceAll(" ", "-")
+          .replaceAll(/[\;\,\/\?\:\@\&\=\+\$\_\.!\~\*\'\(\)\#]/g, ""),
+        emailVerified: new Date(),
+        bio: faker.lorem.sentence(),
       },
     });
+    userIds.push(user.id);
     if (
       (categories.length > 0 && role === "CONTRIBUTOR") ||
       role === "EDITOR"
@@ -80,13 +88,15 @@ async function main() {
       const cat3 = categories[
         Math.floor(Math.random() * categories.length)
       ] as Category;
+      const articleOneContent = faker.lorem.paragraphs(8, "\n\n");
+      const articleTwoContent = faker.lorem.paragraphs(8, "\n\n");
+      const articleThreeContent = faker.lorem.paragraphs(8, "\n\n");
+
       await prisma.article.create({
         data: {
           title: faker.lorem.sentence(),
-          content: faker.lorem.paragraphs(
-            Math.round(Math.random() * 20) + 1,
-            "\n"
-          ),
+          content: articleOneContent,
+          intro: articleOneContent.substring(0, 190),
           slug: faker.lorem.slug(),
           authorId: user.id,
           categories: {
@@ -97,7 +107,8 @@ async function main() {
       await prisma.article.create({
         data: {
           title: faker.lorem.sentence(),
-          content: faker.lorem.paragraphs(),
+          content: articleTwoContent,
+          intro: articleTwoContent.substring(0, 190),
           slug: faker.lorem.slug(),
           published: true,
           authorId: user.id,
@@ -107,19 +118,70 @@ async function main() {
           },
         },
       });
-      await prisma.article.create({
+      const withComments = await prisma.article.create({
         data: {
           title: faker.lorem.sentence(),
-          content: faker.lorem.paragraphs(),
+          content: articleThreeContent,
+          intro: articleThreeContent.substring(0, 190),
           slug: faker.lorem.slug(),
           published: true,
+          image: faker.image.imageUrl(1200, 600),
           authorId: user.id,
           categories: {
             connect: [{ id: cat3.id }],
           },
         },
       });
+      await prisma.comment.createMany({
+        data: [
+          {
+            content: faker.lorem.sentence(),
+            authorId: userIds[
+              Math.floor(Math.random() * userIds.length)
+            ] as string,
+            articleId: withComments.id,
+          },
+          {
+            content: faker.lorem.sentence(),
+            authorId: userIds[
+              Math.floor(Math.random() * userIds.length)
+            ] as string,
+            articleId: withComments.id,
+          },
+          {
+            content: faker.lorem.sentence(),
+            authorId: userIds[
+              Math.floor(Math.random() * userIds.length)
+            ] as string,
+            articleId: withComments.id,
+          },
+        ],
+      });
     }
+  }
+  for (const id of userIds) {
+    await prisma.follow.createMany({
+      data: [
+        {
+          followerId: id,
+          followingId: userIds[
+            Math.floor(Math.random() * userIds.length)
+          ] as string,
+        },
+        {
+          followerId: id,
+          followingId: userIds[
+            Math.floor(Math.random() * userIds.length)
+          ] as string,
+        },
+        {
+          followerId: id,
+          followingId: userIds[
+            Math.floor(Math.random() * userIds.length)
+          ] as string,
+        },
+      ],
+    });
   }
 }
 

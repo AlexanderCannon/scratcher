@@ -56,15 +56,16 @@ model User {
     name          String?
     email         String?   @unique
     emailVerified DateTime?
+    bio           String?
     image         String?
     phone         String?
     role          UserRole  @default(USER)
     accounts      Account[]
     sessions      Session[]
     articles      Article[]
-    Comment       Comment[]
-    Following     Follow[]  @relation("Follower")
-    Followers     Follow[]  @relation("Following")
+    comments      Comment[]
+    following     Follow[]  @relation("Follower")
+    followers     Follow[]  @relation("Following")
     Star          Star[]
 }
 
@@ -81,48 +82,49 @@ model Article {
     title      String
     content    String     @db.Text
     image      String?
+    intro      String?
     published  Boolean    @default(false)
-    author     User       @relation(fields: [authorId], references: [id])
-    categories Category[]
-    authorId   String
     createdAt  DateTime   @default(now())
     updatedAt  DateTime   @updatedAt
+    authorId   String
     slug       String     @unique
-    Comment    Comment[]
+    author     User       @relation(fields: [authorId], references: [id])
+    categories Category[]
+    comments   Comment[]
     Star       Star[]
 }
 
 model Comment {
     id        String   @id @default(cuid())
     content   String
-    author    User     @relation(fields: [authorId], references: [id])
-    article   Article  @relation(fields: [articleId], references: [id])
     authorId  String
     articleId String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    author    User     @relation(fields: [authorId], references: [id])
+    article   Article  @relation(fields: [articleId], references: [id])
 }
 
 model Follow {
     id          String   @id @default(cuid())
-    follower    User     @relation("Follower", fields: [followerId], references: [id])
-    following   User     @relation("Following", fields: [followingId], references: [id])
     followerId  String
     followingId String
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
+    follower    User     @relation("Follower", fields: [followerId], references: [id])
+    following   User     @relation("Following", fields: [followingId], references: [id])
 
     @@unique([followerId, followingId])
 }
 
 model Star {
     id        String   @id @default(cuid())
-    article   Article  @relation(fields: [articleId], references: [id])
     articleId String
-    owner     User     @relation(fields: [userId], references: [id])
     userId    String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    article   Article  @relation(fields: [articleId], references: [id])
+    owner     User     @relation(fields: [userId], references: [id])
 
     @@unique([articleId, userId])
 }

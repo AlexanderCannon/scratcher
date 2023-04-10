@@ -7,24 +7,29 @@ import { remark } from "remark";
 import html from "remark-html";
 import Typography from "./Typography";
 import Loading from "./Loading";
+import Comments from "./Comments";
 import placeholderUser from "../../public/images/png/placeholder-user.png";
 
 interface ArticleProps {
+  id: string;
   title: string;
   image?: string;
   author: User;
   date: Date;
   content: string;
   categories: Category[];
+  comments?: boolean;
 }
 
 const Article = ({
+  id,
   title,
   image,
   author,
   date,
   content,
   categories,
+  comments = false,
 }: ArticleProps) => {
   const [htmlContent, setHtmlContent] = useState<string>("");
 
@@ -47,7 +52,7 @@ const Article = ({
       <Typography as="h1" variant="heading" className="mb-2">
         {title}
       </Typography>
-      <Link href={author.slug ?? ""} padding="p-0">
+      <Link href={`/contributors/${author.slug ?? ""}`} padding="p-0">
         <div className="mb-2 flex items-center">
           <Image
             src={author.image ?? placeholderUser}
@@ -84,6 +89,7 @@ const Article = ({
           </li>
         ))}
       </ul>
+      {comments && <Comments articleId={id} />}
     </div>
   );
 };

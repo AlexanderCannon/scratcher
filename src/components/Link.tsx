@@ -17,7 +17,7 @@ export default function Link({
   return (
     <NextLink.default
       href={href}
-      className={`rounded bg-transparent text-base font-semibold text-gray-800 hover:bg-gray-100 focus:shadow focus:outline-none
+      className={`rounded bg-transparent text-base font-semibold text-gray-800 hover:text-blue-500 focus:shadow focus:outline-none
       ${className ? className : ""}
       ${padding ? padding : "px-4 py-2"}}`}
       {...props}

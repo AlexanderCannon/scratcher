@@ -2,9 +2,9 @@ import Link from "~/components/Link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { BiPlus, BiListUl, BiMaleFemale, BiBookOpen } from "react-icons/bi";
 import Card from "~/components/Card";
-import NotFound from "~/components/NotFound";
 import { api } from "~/utils/api";
 import Feed from "~/components/Feed";
+import Loading from "./Loading";
 
 export default function HomePage() {
   const { data: sessionData } = useSession();
@@ -12,7 +12,7 @@ export default function HomePage() {
   const { data: recentArticles } = api.articles.getRecent.useQuery();
 
   if (!sessionData?.user || !user) {
-    return <NotFound />;
+    return <Loading />;
   }
   const contributorControls =
     user.role === "CONTRIBUTOR" || user.role === "EDITOR";
@@ -72,12 +72,14 @@ export default function HomePage() {
                   </span>
                 </p>
               </Link>
-              <Link href={`/articles/by-me`} padding="p-0">
-                <p className="flex w-full items-center rounded-lg bg-white p-4 shadow-md hover:bg-gray-100">
-                  <BiBookOpen />
-                  <span className="ml-4 flex-1">View all of my articles</span>
-                </p>
-              </Link>
+              {contributorControls && (
+                <Link href={`/articles/by-me`} padding="p-0">
+                  <p className="flex w-full items-center rounded-lg bg-white p-4 shadow-md hover:bg-gray-100">
+                    <BiBookOpen />
+                    <span className="ml-4 flex-1">View all of my articles</span>
+                  </p>
+                </Link>
+              )}
               {contributorControls && (
                 <Card>
                   <h2 className="mb-2 text-xl font-semibold text-gray-800">

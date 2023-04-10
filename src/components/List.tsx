@@ -12,9 +12,7 @@ interface ListItemProps {
 export function List({ children, direction }: ListProps) {
   if (direction === "row") {
     return (
-      <ul className="p4 flex max-w-3xl flex-row flex-wrap justify-center">
-        {children}
-      </ul>
+      <ul className="grid grid-cols-2 gap-4 md:grid-cols-3">{children}</ul>
     );
   }
   return <ul className="flex flex-col space-y-4">{children}</ul>;
@@ -22,8 +20,10 @@ export function List({ children, direction }: ListProps) {
 
 export function ListItem({ children }: ListItemProps) {
   return (
-    <li className="flex items-center space-x-4 rounded-md bg-white p-4 shadow">
-      <div className="flex-grow overflow-hidden ">{children}</div>
+    <li className="align-center mb-6 flex items-center space-x-4 rounded-md bg-white p-4 shadow">
+      <div className="flex flex-grow flex-col items-center overflow-hidden">
+        {children}
+      </div>
     </li>
   );
 }

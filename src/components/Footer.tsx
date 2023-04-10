@@ -1,9 +1,9 @@
-import Link from "~/components/Link";
+import Link from "next/link";
 import Typography from "~/components/Typography";
 
 export default function Footer() {
   return (
-    <footer className="mt-6 bg-white py-4">
+    <footer className="mx-10 bg-white py-4">
       <div className="container mx-auto px-4">
         <Typography variant="body" className="text-center text-gray-400">
           Copyright &copy; 2023

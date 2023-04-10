@@ -35,12 +35,14 @@ export default function ArticlePage() {
   return (
     <Layout>
       <Article
+        id={data.id}
         image={data.image || undefined}
         title={data.title}
         content={data.content}
         author={data.author}
         categories={data.categories}
         date={data.updatedAt || data.createdAt}
+        comments
       />
     </Layout>
   );

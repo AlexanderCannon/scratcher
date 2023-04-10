@@ -40,13 +40,14 @@ export default function Editor() {
     setPublished(articleData?.published ?? false);
     setArticleCategories(initialCategories);
   }, [articleData]);
-
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [fileUrl, setFileUrl] = useState<string>();
   const [articleCategories, setArticleCategories] = useState<Category[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
-  const [published, setPublished] = useState<boolean>(false);
+  const [published, setPublished] = useState<boolean>(
+    articleData?.published ?? false
+  );
 
   const updateArticle = api.articles.update.useMutation();
   const saveArticle = async () => {

@@ -36,6 +36,7 @@ export default function ArticlePage() {
   return (
     <Layout>
       <Article
+        id={data.id}
         image={data.image || undefined}
         title={data.title}
         content={data.content}

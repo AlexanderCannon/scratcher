@@ -12,7 +12,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { BiMinusCircle, BiPlusCircle } from "react-icons/bi";
 import Button from "~/components/Button";
-import placeholderUser from "../../public/images/png/placeholder-user.png";
+import ArticleList from "~/components/ArticleList";
 
 const ContributorPage = () => {
   const { query } = useRouter();
@@ -73,7 +73,7 @@ const ContributorPage = () => {
         <>
           <Image
             className="rounded-full"
-            src={user.image ?? placeholderUser}
+            src={user.image ?? "/images/png/placeholder-user.png"}
             alt={user.name ?? ""}
             width={100}
             height={100}
@@ -81,8 +81,13 @@ const ContributorPage = () => {
           <Typography as="h1" variant="heading">
             Articles by {isMyPage ? "me" : user.name}
           </Typography>
-          <Button variant="primary" role="button" onClick={handleFollow}>
-            <p className="m-0 flex w-full items-center rounded-l p-4">
+          <Button
+            variant="primary"
+            role="button"
+            fullWidth
+            onClick={handleFollow}
+          >
+            <p className="m-0 flex w-full items-center rounded-l p-0">
               {isFollowing ? <BiMinusCircle /> : <BiPlusCircle />}
               <span className="ml-4 flex-1">
                 {isFollowing ? "Unfollow" : "Follow"}
@@ -90,19 +95,7 @@ const ContributorPage = () => {
             </p>
           </Button>
           <List>
-            {articles.map((article: Article) => (
-              <ListItem key={article.id}>
-                <Link href={`/articles/${article.slug}`}>
-                  {/* <Typography
-                    as="h2"
-                    variant="subheading"
-                    className="ml-3 cursor-pointer font-medium text-gray-400 hover:text-gray-500"
-                  > */}
-                  {article.title}
-                  {/* </Typography> */}
-                </Link>
-              </ListItem>
-            ))}
+            <ArticleList articles={articles} />
           </List>
         </>
       )}

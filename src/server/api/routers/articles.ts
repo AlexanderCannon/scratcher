@@ -49,6 +49,10 @@ export const articlesRouter = createTRPCRouter({
             },
           },
         },
+        include: {
+          author: true,
+          categories: true,
+        },
       });
       let nextCursor: typeof cursor | undefined = undefined;
       if (items.length > limit) {
@@ -140,6 +144,7 @@ export const articlesRouter = createTRPCRouter({
           authorId: input.authorId,
           createdAt: new Date(),
           published: input.published,
+          intro: input.content.substring(0, 190),
           categories: {
             connect: input.categories.map((id) => ({ id })),
           },
@@ -177,6 +182,7 @@ export const articlesRouter = createTRPCRouter({
             .replaceAll(" ", "-")
             .replaceAll(/[\;\,\/\?\:\@\&\=\+\$\_\.!\~\*\'\(\)\#]/g, ""),
           content: input.content,
+          intro: input.content.substring(0, 190),
           authorId: input.authorId,
           published: input.published,
           image: input.image,
@@ -221,6 +227,7 @@ export const articlesRouter = createTRPCRouter({
           content: input.content,
           authorId: input.authorId,
           image: input.image,
+          intro: input.content?.substring(0, 190),
           categories: {
             connect: input.categories?.map((id) => ({ id })),
           },

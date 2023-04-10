@@ -1,3 +1,5 @@
+import next from "next/types";
+
 interface ButtonSetProps {
   page: number;
   handleFetchNextPage: () => void;
@@ -11,19 +13,26 @@ export default function ButtonSet({
   handleFetchPreviousPage,
   nextCursor,
 }: ButtonSetProps) {
+  const handleNextClick = () => {
+    if (nextCursor) handleFetchNextPage();
+  };
+  const handlePreviousClick = () => {
+    if (page > 0) handleFetchPreviousPage();
+  };
   return (
-    <div className="w-100 mt-6 flex w-2/3 justify-between">
+    <div className="mt-6 flex w-2/3 w-full justify-between">
       <button
         disabled={page === 0}
-        onClick={handleFetchPreviousPage}
-        className="w-1/2 rounded-l bg-gray-200 px-4 py-2 font-bold text-gray-800 hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
+        onClick={handlePreviousClick}
+        className="w-1/2 rounded-l bg-blue-500  px-4 py-2 font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
         Previous
       </button>
+      <span className="w-1"></span>
       <button
         disabled={!nextCursor}
-        onClick={handleFetchNextPage}
-        className="w-1/2 rounded-r bg-gray-200 px-4 py-2 font-bold text-gray-800 hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
+        onClick={handleNextClick}
+        className="w-1/2 rounded-r bg-blue-500  px-4 py-2 font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
         Next
       </button>

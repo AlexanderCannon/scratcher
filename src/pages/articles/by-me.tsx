@@ -7,7 +7,6 @@ import Loading from "~/components/Loading";
 import { Article } from "@prisma/client";
 import { List, ListItem } from "~/components/List";
 import Typography from "~/components/Typography";
-import placeholderUser from "../../public/images/png/placeholder-user.png";
 
 const ContributorPage = () => {
   const { data, isLoading } = api.user.get.useQuery();
@@ -29,7 +28,7 @@ const ContributorPage = () => {
         <>
           <Image
             className="rounded-full"
-            src={user.image ?? placeholderUser}
+            src={user.image ?? "/images/png/placeholder-user.png"}
             alt={user.name ?? "placeholder"}
             width={100}
             height={100}
@@ -40,7 +39,7 @@ const ContributorPage = () => {
           <List>
             {articles.map((article: Article) => (
               <ListItem key={article.id}>
-                <Link href={`/articles/${article.slug}`}>
+                <Link href={`/articles/edit/${article.id}`}>
                   {/* <Typography
                     as="h2"
                     variant="subheading"

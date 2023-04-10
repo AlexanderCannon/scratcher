@@ -16,7 +16,6 @@ export default function Toast({
   timeout = 7800,
 }: ToastProps) {
   const [show, setShow] = useState(visible);
-  console.log("visible", visible);
   useEffect(() => {
     setShow(visible);
     setTimeout(() => {

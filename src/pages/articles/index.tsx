@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import Link from "~/components/Link";
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout";
 import Loading from "~/components/Loading";
 import PaginationButtons from "~/components/PaginationButtons";
-import { List, ListItem } from "~/components/List";
+import { List } from "~/components/List";
 import Typography from "~/components/Typography";
-import NotFound from "~/components/NotFound";
+import ArticleList from "~/components/ArticleList";
 
 export default function ArticlePage() {
   const router = useRouter();
@@ -49,28 +48,14 @@ export default function ArticlePage() {
   const nextCursor = data?.pages[page]?.nextCursor;
   return (
     <Layout>
-      <Typography as="h1" variant="heading">
+      <Typography as="h1" variant="heading" className="mb-10">
         Articles
       </Typography>
       <List>
         {isLoading || isFetchingNextPage || !currentPage ? (
           <Loading />
         ) : (
-          currentPage.map((article) => (
-            <Link href={`/articles/${article.slug}`} key={article.id}>
-              <ListItem>
-                <div className="w-2/3">
-                  <Typography
-                    as="h2"
-                    variant="subheading"
-                    className="ml-3 cursor-pointer font-medium text-gray-400 hover:text-gray-500"
-                  >
-                    {article.title}
-                  </Typography>
-                </div>
-              </ListItem>
-            </Link>
-          ))
+          <ArticleList articles={currentPage} />
         )}
       </List>
       <PaginationButtons

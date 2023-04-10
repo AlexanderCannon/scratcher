@@ -3,7 +3,6 @@ import Image from "next/image";
 import { Article, User, Category } from "@prisma/client";
 import Typography from "./Typography";
 import Link from "./Link";
-import placeholderUser from "../../public/images/png/placeholder-user.png";
 
 interface FeedItemProps {
   article: Article & {
@@ -21,7 +20,7 @@ export default function FeedItem({ article }: FeedItemProps) {
             width={50}
             height={50}
             className="rounded-full"
-            src={article.author.image ?? placeholderUser}
+            src={article.author.image ?? "/images/png/placeholder-user.png"}
             alt={article.author.name ?? "placeholder"}
           />
           <div className="ml-3 flex flex-col">
