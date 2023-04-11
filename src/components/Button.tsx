@@ -15,7 +15,7 @@ const Button: React.FC<ButtonProps> = ({
   fullWidth = false,
   disabled = false,
   isLoading = false,
-  className,
+  className = "",
   ...props
 }) => {
   const variantClasses = {

@@ -3,13 +3,13 @@ import { useSession } from "next-auth/react";
 import { type ChangeEvent, type FormEvent, type Dispatch } from "react";
 import Image from "next/image";
 import { api } from "~/utils/api";
-import NotFound from "~/components/NotFound";
 import ImageUploader from "~/components/ImageUploader";
 import Layout from "~/components/Layout";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
 import Toast from "~/components/Toast";
 import Card from "~/components/Card";
+import Loading from "~/components/Loading";
 
 interface FormErrors {
   name?: string;
@@ -147,7 +147,7 @@ export default function SettingsPage() {
   };
 
   if (!sessionData?.user) {
-    return <NotFound />;
+    return <Loading />;
   }
 
   return (

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Layout from "~/components/Layout";
 import { api } from "~/utils/api";
-import NotFound from "~/components/NotFound";
+import Loading from "~/components/Loading";
 
 export default function FollowingPage() {
   const session = useSession();
@@ -11,7 +11,7 @@ export default function FollowingPage() {
   if (!session || !following)
     return (
       <Layout>
-        <NotFound />
+        <Loading />
       </Layout>
     );
   return (
