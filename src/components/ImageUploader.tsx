@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import Input from "~/components/Input";
-import Button from "./Button";
+import Button from "./Buttons/Button";
 
 interface ImageUploaderProps {
   onUpload: (files: File[]) => void;

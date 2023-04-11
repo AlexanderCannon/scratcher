@@ -10,7 +10,7 @@ interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
 export default function Link({
   href,
   children,
-  className,
+  className = "",
   padding,
   ...props
 }: LinkProps) {
@@ -18,7 +18,7 @@ export default function Link({
     <NextLink.default
       href={href}
       className={`rounded bg-transparent text-base font-semibold text-gray-800 hover:text-blue-500 focus:shadow focus:outline-none
-      ${className ? className : ""}
+      ${className}
       ${padding ? padding : "px-4 py-2"}}`}
       {...props}
     >

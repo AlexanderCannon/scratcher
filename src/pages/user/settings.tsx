@@ -6,10 +6,11 @@ import { api } from "~/utils/api";
 import ImageUploader from "~/components/ImageUploader";
 import Layout from "~/components/Layout";
 import Input from "~/components/Input";
-import Button from "~/components/Button";
+import Button from "~/components/Buttons/Button";
 import Toast from "~/components/Toast";
 import Card from "~/components/Card";
 import Loading from "~/components/Loading";
+import { BiPhotoAlbum } from "react-icons/bi";
 
 interface FormErrors {
   name?: string;
@@ -152,13 +153,19 @@ export default function SettingsPage() {
 
   return (
     <Layout>
-      <Image
-        src={image ?? ""}
-        alt={name ?? ""}
-        width={100}
-        height={100}
-        className="rounded-full"
-      />
+      <div className="relative">
+        <Image
+          src={image ?? ""}
+          alt={name ?? ""}
+          width={100}
+          height={100}
+          className="rounded-full"
+        />
+        <div className="absolute left-0 top-0 h-full w-full rounded-full bg-gray-800 opacity-50"></div>
+        <button className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-transparent">
+          <BiPhotoAlbum size={30} color="white" />
+        </button>
+      </div>
       <h1 className="mb-6 text-3xl font-semibold text-gray-800">
         Account Settings
       </h1>

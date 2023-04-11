@@ -22,38 +22,44 @@ export default function HomePage() {
         <h1 className="mb-6 text-3xl font-semibold text-gray-800">
           Welcome, {user?.name}!
         </h1>
-        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="mt-8 grid w-full gap-6">
+        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="col-span-2 mt-8 grid w-full gap-6">
             <Card>
               <Feed />
             </Card>
           </div>
-          <div className="mt-8 grid w-full gap-6">
+          <div className="col-span-1 mt-8 grid gap-6">
             <div className="grid max-h-32 gap-6">
               <Card>
-                <h2 className="mb-2 text-xl font-semibold text-gray-800">
-                  Account Details
-                </h2>
-                <div className="mb-6 flex flex-col items-center justify-between sm:flex-row">
+                <div className="items-left flex flex-col flex-wrap justify-between">
+                  <Link padding="p-0" href="user/settings">
+                    <h2 className="mb-2 text-xl font-semibold text-gray-800 hover:text-blue-500">
+                      Account Details
+                    </h2>
+                  </Link>
                   <p className="text-gray-600">
                     Name: {user?.name}
                     <br />
                     Email: {user?.email}
                   </p>
-                  <Link href="user/following">Following</Link>
-                  <Link href="user/settings">Edit Profile</Link>
+                  <Link padding="px-0 py-4" href="user/following">
+                    Following
+                  </Link>
+                  <Link padding="px-0 py-4" href="user/settings">
+                    Edit Profile
+                  </Link>
                 </div>
               </Card>
               {contributorControls && (
                 <Link href="/articles/new" padding="p-0">
-                  <p className="m-0 flex w-full items-center rounded-lg bg-white p-4 shadow-md hover:bg-gray-100">
+                  <p className="m-0 flex items-center rounded-lg bg-white p-4 shadow-md hover:bg-gray-100">
                     <BiPlus />
                     <span className="ml-4 flex-1">Create a new article</span>
                   </p>
                 </Link>
               )}
               <Link href={"/articles"} padding="p-0">
-                <p className="m-0 flex w-full items-center rounded-lg bg-white p-4 shadow-md hover:bg-gray-100">
+                <p className="m-0 flex items-center rounded-lg bg-white p-4 shadow-md hover:bg-gray-100">
                   <BiListUl />
                   <span className="ml-4 flex-1">
                     Read articles by our contributors

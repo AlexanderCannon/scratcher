@@ -3,7 +3,7 @@ import { useSession, signIn } from "next-auth/react";
 import { api } from "~/utils/api";
 import PaginationButtons from "~/components/PaginationButtons";
 import Typography from "~/components/Typography";
-import Button from "./Button";
+import Button from "./Buttons/Button";
 import { TextArea } from "./Input";
 import Image from "next/image";
 import Card from "./Card";
@@ -17,16 +17,15 @@ export default function Comments({ articleId }: CommentsProps) {
   const { data: sessionData } = useSession();
   const createComment = api.comments.createComment.useMutation();
 
-  const { data, fetchNextPage} =
-    api.comments.getComments.useInfiniteQuery(
-      {
-        articleId,
-        limit: 10,
-      },
-      {
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
-      }
-    );
+  const { data, fetchNextPage } = api.comments.getComments.useInfiniteQuery(
+    {
+      articleId,
+      limit: 10,
+    },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }
+  );
   const [newComment, setNewComment] = useState("");
 
   const handleSubmit = (event: any) => {

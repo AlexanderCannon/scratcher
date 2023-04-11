@@ -8,7 +8,7 @@ import MarkdownEditor from "~/components/MarkdownEditor";
 import { useSession } from "next-auth/react";
 import NotFound from "~/components/NotFound";
 import PhotoPicker from "~/components/PhotoPicker";
-import Button from "~/components/Button";
+import Button from "~/components/Buttons/Button";
 import Select from "~/components/Select";
 import Loading from "~/components/Loading";
 import format from "date-fns/format";

@@ -33,23 +33,31 @@ const ContributorPage = () => {
             width={100}
             height={100}
           />
-          <Typography as="h1" variant="heading">
+          <Typography as="h1" variant="heading" className="mb-8">
             My Articles
           </Typography>
           <List>
-            {articles.map((article: Article) => (
-              <ListItem key={article.id}>
-                <Link href={`/articles/edit/${article.id}`}>
-                  {/* <Typography
+            {articles.length > 0 ? (
+              articles.map((article: Article) => (
+                <ListItem key={article.id}>
+                  <Link href={`/articles/edit/${article.id}`}>
+                    {/* <Typography
                     as="h2"
                     variant="subheading"
                     className="ml-3 cursor-pointer font-medium text-gray-400 hover:text-gray-500"
                   > */}
-                  {article.title}
-                  {/* </Typography> */}
-                </Link>
+                    {article.title}
+                    {/* </Typography> */}
+                  </Link>
+                </ListItem>
+              ))
+            ) : (
+              <ListItem>
+                <Typography as="p" variant="body">
+                  You haven't written any articles yet.
+                </Typography>
               </ListItem>
-            ))}
+            )}
           </List>
         </>
       )}

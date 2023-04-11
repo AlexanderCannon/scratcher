@@ -11,7 +11,7 @@ import Typography from "~/components/Typography";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { BiMinusCircle, BiPlusCircle } from "react-icons/bi";
-import Button from "~/components/Button";
+import Button from "~/components/Buttons/Button";
 import ArticleList from "~/components/ArticleList";
 
 const ContributorPage = () => {
