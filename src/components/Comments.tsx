@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSession, signIn } from "next-auth/react";
+
 import { api } from "~/utils/api";
 import PaginationButtons from "~/components/PaginationButtons";
 import Typography from "~/components/Typography";
@@ -7,6 +7,7 @@ import Button from "./Button";
 import { TextArea } from "./Input";
 import Image from "next/image";
 import Card from "./Card";
+import { SignInButton, useUser } from "@clerk/nextjs";
 
 interface CommentsProps {
   articleId: string;
@@ -14,19 +15,18 @@ interface CommentsProps {
 
 export default function Comments({ articleId }: CommentsProps) {
   const [page, setPage] = useState(0);
-  const { data: sessionData } = useSession();
+  const { user } = useUser();
   const createComment = api.comments.createComment.useMutation();
 
-  const { data, fetchNextPage} =
-    api.comments.getComments.useInfiniteQuery(
-      {
-        articleId,
-        limit: 10,
-      },
-      {
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
-      }
-    );
+  const { data, fetchNextPage } = api.comments.getComments.useInfiniteQuery(
+    {
+      articleId,
+      limit: 10,
+    },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }
+  );
   const [newComment, setNewComment] = useState("");
 
   const handleSubmit = (event: any) => {
@@ -43,17 +43,17 @@ export default function Comments({ articleId }: CommentsProps) {
             id: "temp",
             content: newComment,
             articleId,
-            authorId: sessionData?.user.id ?? "",
+            authorId: user?.id ?? "",
             createdAt: date,
             updatedAt: date,
             author: {
-              id: sessionData?.user.id ?? "",
-              name: sessionData?.user.name ?? "",
-              image: sessionData?.user.image ?? "",
+              id: user?.id ?? "",
+              name: user?.fullName ?? "",
+              image: user?.profileImageUrl ?? "",
               role: "USER",
               username: "Me",
               slug: "",
-              email: sessionData?.user.email ?? "",
+              email: user?.emailAddresses.join(" ") ?? "",
               bio: "",
               emailVerified: date,
               phone: "",
@@ -86,7 +86,7 @@ export default function Comments({ articleId }: CommentsProps) {
       <Typography as="h2" variant="subheading">
         Comments
       </Typography>
-      {sessionData?.user.id ? (
+      {user?.id ? (
         <form onSubmit={handleSubmit} className="mb-6">
           <Typography>
             <label htmlFor="comment">Add a comment:</label>
@@ -102,7 +102,9 @@ export default function Comments({ articleId }: CommentsProps) {
           </Button>
         </form>
       ) : (
-        <Button onClick={() => signIn()}>Log in to add a comment.</Button>
+        <Button>
+          <SignInButton />
+        </Button>
       )}
       <ul>
         {currentPage ? (

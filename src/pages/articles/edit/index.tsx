@@ -5,18 +5,17 @@ import Image from "next/image";
 import Layout from "~/components/Layout";
 import { api } from "~/utils/api";
 import MarkdownEditor from "~/components/MarkdownEditor";
-import { useSession } from "next-auth/react";
-import NotFound from "~/components/NotFound";
 import PhotoPicker from "~/components/PhotoPicker";
 import Button from "~/components/Button";
 import Select from "~/components/Select";
 import Loading from "~/components/Loading";
+import { useUser } from "@clerk/nextjs";
 
 export default function Editor() {
   const { data: categoryData } = api.categories.getAll.useQuery(undefined, {
     staleTime: Infinity,
   });
-  const { data: sessionData } = useSession();
+  const { user } = useUser();
   const router = useRouter();
 
   const [title, setTitle] = useState<string>("");
@@ -31,7 +30,7 @@ export default function Editor() {
     setSaving(true);
     createArticle.mutate(
       {
-        authorId: sessionData?.user.id ?? "",
+        authorId: user?.id ?? "",
         title,
         content,
         image,
@@ -72,10 +71,10 @@ export default function Editor() {
     setImage(url);
   };
 
-  if (!sessionData)
+  if (!user)
     return (
       <Layout>
-        <NotFound />
+        <Loading />
       </Layout>
     );
   return (

@@ -1,15 +1,15 @@
 import { useState, useEffect, SetStateAction } from "react";
-import { useSession } from "next-auth/react";
 import { type ChangeEvent, type FormEvent, type Dispatch } from "react";
 import Image from "next/image";
 import { api } from "~/utils/api";
-import NotFound from "~/components/NotFound";
 import ImageUploader from "~/components/ImageUploader";
 import Layout from "~/components/Layout";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
 import Toast from "~/components/Toast";
 import Card from "~/components/Card";
+import { useUser } from "@clerk/nextjs";
+import Loading from "~/components/Loading";
 
 interface FormErrors {
   name?: string;
@@ -23,29 +23,32 @@ interface FormErrors {
 }
 
 export default function SettingsPage() {
-  const { data: sessionData } = useSession();
-  const { data: user } = api.user.get.useQuery();
+  const { user: user } = useUser();
   const updateProfile = api.user.update.useMutation();
 
-  const [name, setName] = useState<string>(user?.name ?? "");
-  const [email, setEmail] = useState<string>(user?.email ?? "");
-  const [phone, setPhone] = useState<string>(user?.phone ?? "");
+  const [name, setName] = useState<string>(user?.fullName ?? "");
+  const [email, setEmail] = useState<string>(
+    user?.emailAddresses.join(", ") ?? ""
+  );
+  const [phone, setPhone] = useState<string>("");
   const [username, setUsername] = useState<string>(user?.username ?? "");
-  const [slug, setSlug] = useState<string>(user?.slug ?? "");
-  const [slugDirty, setSlugDirty] = useState<boolean>(!!user?.slug);
-  const [image, setImage] = useState<string>(user?.image ?? "");
+  const [slug, setSlug] = useState<string>("");
+  const [slugDirty, setSlugDirty] = useState<boolean>(
+    !!user?.publicMetadata.slug
+  );
+  const [image, setImage] = useState<string>(user?.profileImageUrl ?? "");
   const [saving, setSaving] = useState<boolean>(false);
   const [showToast, setShowToast] = useState<boolean>(false);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
 
   useEffect(() => {
     if (user) {
-      setName(user.name ?? "");
-      setEmail(user.email ?? "");
-      setPhone(user.phone ?? "");
-      setUsername(user.username ?? "");
-      setSlug(user.slug ?? "");
-      setImage(user.image ?? "");
+      setName(user?.fullName ?? "");
+      setEmail("");
+      setPhone("");
+      setUsername(user?.username ?? "");
+      setSlug("");
+      setImage(user.profileImageUrl ?? "");
     }
   }, [user]);
 
@@ -99,19 +102,19 @@ export default function SettingsPage() {
     const sanitizedImage = image.trim();
 
     const errors: FormErrors = {};
-    if (!sanitizedName && sanitizedName != user?.name) {
+    if (!sanitizedName && sanitizedName != user?.fullName) {
       errors.name = "Name is required";
     }
-    if (!sanitizedEmail && sanitizedEmail != user?.email) {
-      errors.email = "Email is required";
-    }
-    if (
-      user?.phone &&
-      user.phone !== sanitizedPhone &&
-      !/^[\d\s()+-]{10,}$/g.test(sanitizedPhone)
-    ) {
-      errors.phone = "Please enter a valid phone number";
-    }
+    // if (!sanitizedEmail && sanitizedEmail != user?.emailAddresses) {
+    //   errors.email = "Email is required";
+    // }
+    // if (
+    //   user?.phoneNumbers &&
+    //   user.phoneNumbers.filter(number => number.phoneNumber !== sanitizedPhone &&
+    //   !/^[\d\s()+-]{10,}$/g.test(sanitizedPhone)
+    // ) {
+    //   errors.phone = "Please enter a valid phone number";
+    // }
     if (
       user?.username &&
       user.username !== sanitizedUsername &&
@@ -146,8 +149,8 @@ export default function SettingsPage() {
     setSaving(false);
   };
 
-  if (!sessionData?.user) {
-    return <NotFound />;
+  if (!user) {
+    return <Loading />;
   }
 
   return (

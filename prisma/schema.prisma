@@ -8,39 +8,6 @@ datasource db {
     relationMode = "prisma"
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
-
-// Necessary for Next auth
-model Account {
-    id                String  @id @default(cuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? // @db.Text
-    access_token      String? // @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? // @db.Text
-    session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@unique([provider, providerAccountId])
-}
-
-model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 enum UserRole {
     USER
     ADMIN
@@ -50,23 +17,21 @@ enum UserRole {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    username      String?   @unique
-    slug          String?   @unique
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    bio           String?
-    image         String?
-    phone         String?
-    role          UserRole  @default(USER)
-    accounts      Account[]
-    sessions      Session[]
-    articles      Article[]
-    comments      Comment[]
-    following     Follow[]  @relation("Follower")
-    followers     Follow[]  @relation("Following")
-    Star          Star[]
+    id        String    @id
+    slug      String?   @unique
+    email     String?   @unique
+    bio       String?
+    image     String?
+    phone     String?
+    role      UserRole  @default(USER)
+    articles  Article[]
+    comments  Comment[]
+    following Follow[]  @relation("Follower")
+    followers Follow[]  @relation("Following")
+    Star      Star[]
+
+    @@unique([id, slug])
+    @@index([id])
 }
 
 model VerificationToken {
@@ -88,10 +53,13 @@ model Article {
     updatedAt  DateTime   @updatedAt
     authorId   String
     slug       String     @unique
-    author     User       @relation(fields: [authorId], references: [id])
     categories Category[]
     comments   Comment[]
     Star       Star[]
+    User       User?      @relation(fields: [userId], references: [id])
+    userId     String?
+
+    @@index([slug, title])
 }
 
 model Comment {
@@ -135,4 +103,6 @@ model Category {
     slug        String    @unique
     description String?
     articles    Article[]
+
+    @@index([slug, name])
 }

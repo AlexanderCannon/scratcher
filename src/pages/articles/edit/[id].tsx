@@ -5,13 +5,13 @@ import { Category } from "@prisma/client";
 import Layout from "~/components/Layout";
 import { api } from "~/utils/api";
 import MarkdownEditor from "~/components/MarkdownEditor";
-import { useSession } from "next-auth/react";
 import NotFound from "~/components/NotFound";
 import PhotoPicker from "~/components/PhotoPicker";
 import Button from "~/components/Button";
 import Select from "~/components/Select";
 import Loading from "~/components/Loading";
 import format from "date-fns/format";
+import { useUser } from "@clerk/nextjs";
 
 export default function Editor() {
   const { query } = useRouter();
@@ -30,7 +30,7 @@ export default function Editor() {
   const { data: categoryData } = api.categories.getAll.useQuery(undefined, {
     staleTime: Infinity,
   });
-  const { data: sessionData } = useSession();
+  const { user } = useUser();
 
   useEffect(() => {
     const initialCategories = articleData?.categories ?? ([] as Category[]);
@@ -54,7 +54,7 @@ export default function Editor() {
     setSaving(true);
     updateArticle.mutate(
       {
-        authorId: sessionData?.user.id ?? "",
+        authorId: user?.id ?? "",
         id: articleData?.id ?? "",
         title,
         content,
@@ -101,7 +101,7 @@ export default function Editor() {
     setFileUrl(url);
   };
 
-  if (!sessionData || !id) {
+  if (!user || !id) {
     return (
       <Layout>
         <NotFound />

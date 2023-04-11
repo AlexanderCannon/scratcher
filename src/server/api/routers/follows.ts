@@ -9,7 +9,7 @@ export const followsRouter = createTRPCRouter({
   getMyFollowers: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.follow.findMany({
       where: {
-        followingId: ctx.session.user.id,
+        followingId: ctx.userId,
       },
       include: {
         follower: true,
@@ -19,7 +19,7 @@ export const followsRouter = createTRPCRouter({
   getMyFollowing: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.follow.findMany({
       where: {
-        followerId: ctx.session.user.id,
+        followerId: ctx.userId,
       },
       include: {
         following: true,
@@ -38,7 +38,7 @@ export const followsRouter = createTRPCRouter({
       return ctx.prisma.follow.create({
         data: {
           followingId: input,
-          followerId: ctx.session.user.id,
+          followerId: ctx.userId,
         },
       });
     }),
@@ -55,7 +55,7 @@ export const followsRouter = createTRPCRouter({
         where: {
           followerId_followingId: {
             followingId: input,
-            followerId: ctx.session.user.id,
+            followerId: ctx.userId,
           },
         },
       });
@@ -74,7 +74,7 @@ export const followsRouter = createTRPCRouter({
         where: {
           followerId_followingId: {
             followingId: input,
-            followerId: ctx.session.user.id,
+            followerId: ctx.userId,
           },
         },
       });

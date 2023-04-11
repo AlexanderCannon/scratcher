@@ -9,14 +9,14 @@ export const starsRouter = createTRPCRouter({
   getMyStarers: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.star.findMany({
       where: {
-        userId: ctx.session.user.id,
+        userId: ctx.userId,
       },
     });
   }),
   getMyStars: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.star.findMany({
       where: {
-        userId: ctx.session.user.id,
+        userId: ctx.userId,
       },
     });
   }),
@@ -32,7 +32,7 @@ export const starsRouter = createTRPCRouter({
       return ctx.prisma.star.create({
         data: {
           articleId: input,
-          userId: ctx.session.user.id,
+          userId: ctx.userId,
         },
       });
     }),
@@ -49,7 +49,7 @@ export const starsRouter = createTRPCRouter({
         where: {
           articleId_userId: {
             articleId: input,
-            userId: ctx.session.user.id,
+            userId: ctx.userId,
           },
         },
       });

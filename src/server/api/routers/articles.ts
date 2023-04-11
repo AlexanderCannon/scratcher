@@ -1,22 +1,28 @@
 import z from "zod";
 import {
   createTRPCRouter,
-  protectedAdminProcedure,
   protectedContributorProcedure,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { clerkClient } from "@clerk/nextjs/server";
+import type { User } from "@clerk/nextjs/dist/api";
+
+const filterUserForPublic = (user: User) => {
+  return {
+    id: user.id,
+    name: `${user.firstName} ${user.lastName}`,
+    username: user.username,
+    image: user.profileImageUrl,
+  };
+};
 
 export const articlesRouter = createTRPCRouter({
-  getAll: protectedAdminProcedure.query(({ ctx }) => {
-    return ctx.prisma.article.findMany();
-  }),
-
   getRecent: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.article.findMany({
       take: 5,
       where: {
-        authorId: ctx.session.user.id,
+        authorId: ctx.userId,
       },
       orderBy: {
         createdAt: "desc",
@@ -50,9 +56,11 @@ export const articlesRouter = createTRPCRouter({
           },
         },
         include: {
-          author: true,
           categories: true,
         },
+      });
+      const users = await clerkClient.users.getUserList({
+        userId: items.map((item) => item.authorId),
       });
       let nextCursor: typeof cursor | undefined = undefined;
       if (items.length > limit) {
@@ -60,48 +68,63 @@ export const articlesRouter = createTRPCRouter({
         nextCursor = nextItem?.id;
       }
       return {
-        items,
+        items: items.map((item) => {
+          const author = users.find((user) => user.id === item.authorId);
+          if (!author) {
+            throw new Error("Author not found");
+          }
+          return {
+            ...item,
+            author: filterUserForPublic(author),
+          };
+        }),
         nextCursor,
       };
     }),
 
-  getById: publicProcedure.input(z.string()).query(({ ctx, input }) => {
-    return ctx.prisma.article.findFirst({
+  getById: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
+    const article = await ctx.prisma.article.findFirst({
       where: {
         id: input,
       },
       include: {
         categories: true,
-        author: true,
       },
     });
+    if (!article) throw new Error("Article not found");
+    const user = await clerkClient.users.getUser(article.authorId);
+    return { ...article, author: filterUserForPublic(user) };
   }),
-  getBySlug: publicProcedure.input(z.string()).query(({ ctx, input }) => {
-    return ctx.prisma.article.findFirst({
+  getBySlug: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
+    const article = await ctx.prisma.article.findFirst({
       where: {
         published: true,
         slug: input,
       },
       include: {
         categories: true,
-        author: true,
       },
     });
+    if (!article) throw new Error("Article not found");
+    const user = await clerkClient.users.getUser(article.authorId);
+    return { ...article, author: filterUserForPublic(user) };
   }),
 
   getBySlugContributor: protectedContributorProcedure
     .input(z.string())
-    .query(({ ctx, input }) => {
-      return ctx.prisma.article.findFirst({
+    .query(async ({ ctx, input }) => {
+      const article = await ctx.prisma.article.findFirst({
         where: {
-          authorId: ctx.session.user.id,
+          authorId: ctx.user.id,
           slug: input,
         },
         include: {
           categories: true,
-          author: true,
         },
       });
+      if (!article) throw new Error("Article not found");
+      const user = await clerkClient.users.getUser(article.authorId);
+      return { article, author: filterUserForPublic(user) };
     }),
   getByAuthor: publicProcedure.input(z.string()).query(({ ctx, input }) => {
     return ctx.prisma.article.findMany({
@@ -145,9 +168,10 @@ export const articlesRouter = createTRPCRouter({
           },
           published: true,
         },
-        include: {
-          author: true,
-        },
+      });
+
+      const users = await clerkClient.users.getUserList({
+        userId: items.map((item) => item.authorId),
       });
 
       let nextCursor: typeof cursor | undefined = undefined;
@@ -156,7 +180,16 @@ export const articlesRouter = createTRPCRouter({
         nextCursor = nextItem?.id;
       }
       return {
-        items,
+        items: items.map((item) => {
+          const author = users.find((user) => user.id === item.authorId);
+          if (!author) {
+            throw new Error("Author not found");
+          }
+          return {
+            ...item,
+            author: filterUserForPublic(author),
+          };
+        }),
         nextCursor,
       };
     }),
@@ -204,9 +237,9 @@ export const articlesRouter = createTRPCRouter({
     )
     .mutation(({ ctx, input }) => {
       if (
-        ctx.session.user.role !== "ADMIN" &&
-        ctx.session.user.role !== "EDITOR" &&
-        ctx.session.user.id !== input.authorId
+        ctx.user.privateMetadata.role !== "ADMIN" &&
+        ctx.user.privateMetadata.role !== "EDITOR" &&
+        ctx.user.id !== input.authorId
       ) {
         throw new Error("Not authorized");
       }
@@ -245,9 +278,9 @@ export const articlesRouter = createTRPCRouter({
     )
     .mutation(({ ctx, input }) => {
       if (
-        ctx.session.user.role !== "ADMIN" &&
-        ctx.session.user.role !== "EDITOR" &&
-        ctx.session.user.id !== input.authorId
+        ctx.user.privateMetadata.role !== "ADMIN" &&
+        ctx.user.privateMetadata.role !== "EDITOR" &&
+        ctx.userId !== input.authorId
       ) {
         throw new Error("Not authorized");
       }
@@ -293,7 +326,7 @@ export const articlesRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const following = await ctx.prisma.follow.findMany({
         where: {
-          followerId: ctx.session.user.id,
+          followerId: ctx.userId,
         },
         select: {
           followingId: true,
@@ -314,9 +347,11 @@ export const articlesRouter = createTRPCRouter({
           published: true,
         },
         include: {
-          author: true,
           categories: true,
         },
+      });
+      const users = await clerkClient.users.getUserList({
+        userId: items.map((item) => item.authorId),
       });
       let nextCursor: typeof cursor | undefined = undefined;
       if (items.length > limit) {
@@ -324,7 +359,16 @@ export const articlesRouter = createTRPCRouter({
         nextCursor = nextItem?.id;
       }
       return {
-        items,
+        items: items.map((item) => {
+          const author = users.find((user) => user.id === item.authorId);
+          if (!author) {
+            throw new Error("Author not found");
+          }
+          return {
+            ...item,
+            author: filterUserForPublic(author),
+          };
+        }),
         nextCursor,
       };
     }),

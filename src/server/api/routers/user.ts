@@ -2,10 +2,10 @@ import { z } from "zod";
 import { UserRole } from "@prisma/client";
 import {
   createTRPCRouter,
-  protectedAdminProcedure,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { users } from "@clerk/nextjs/dist/api";
 
 export const userRouter = createTRPCRouter({
   getBySlug: publicProcedure.input(z.string()).query(({ ctx, input }) => {
@@ -40,7 +40,7 @@ export const userRouter = createTRPCRouter({
   get: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.user.findFirst({
       where: {
-        id: ctx.session.user.id,
+        id: ctx.userId,
       },
       include: {
         articles: true,
@@ -90,6 +90,23 @@ export const userRouter = createTRPCRouter({
         nextCursor,
       };
     }),
+  create: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        email: z.string(),
+        username: z.string(),
+        phone: z.string(),
+        slug: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const data = input;
+      return ctx.prisma.user.create({
+        data,
+      });
+    }),
   update: protectedProcedure
     .input(
       z.object({
@@ -102,28 +119,16 @@ export const userRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const data = input;
-      return ctx.prisma.user.update({
-        where: {
-          id: ctx.session.user.id,
+      users.updateUser(ctx.userId, {
+        publicMetadata: {
+          username: input.username,
+          slug: input.slug,
         },
-        data,
       });
-    }),
-  adminUpdate: protectedAdminProcedure
-    .input(
-      z.object({
-        name: z.string(),
-        phoneNumber: z.string(),
-        role: z.enum([UserRole.ADMIN, UserRole.EDITOR, UserRole.CONTRIBUTOR]),
-        image: z.string().optional(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
       const data = input;
       return ctx.prisma.user.update({
         where: {
-          id: ctx.session.user.id,
+          id: ctx.userId,
         },
         data,
       });

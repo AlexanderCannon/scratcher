@@ -1,26 +1,32 @@
 import Link from "~/components/Link";
-import { signIn, signOut, useSession } from "next-auth/react";
 import { BiPlus, BiListUl, BiMaleFemale, BiBookOpen } from "react-icons/bi";
 import Card from "~/components/Card";
 import { api } from "~/utils/api";
 import Feed from "~/components/Feed";
 import Loading from "./Loading";
+import { useUser } from "@clerk/nextjs";
+import { Article } from "@prisma/client";
 
 export default function HomePage() {
-  const { data: sessionData } = useSession();
-  const { data: user } = api.user.get.useQuery();
-  const { data: recentArticles } = api.articles.getRecent.useQuery();
-
-  if (!sessionData?.user || !user) {
+  const { user } = useUser();
+  // const { data: recentArticles } = api.articles.getRecent.useQuery();
+  const recentArticles: Article[] = [];
+  console.log("user", user);
+  if (!user) {
     return <Loading />;
   }
+  const { data: userData } = api.user.get.useQuery();
+  console.log("userData", userData);
+  const dbUser = {
+    role: "USER",
+  };
   const contributorControls =
-    user.role === "CONTRIBUTOR" || user.role === "EDITOR";
+    dbUser?.role === "CONTRIBUTOR" || dbUser?.role === "EDITOR";
   return (
     <>
       <div className="min-h-screen w-full flex-grow bg-gray-100">
         <h1 className="mb-6 text-3xl font-semibold text-gray-800">
-          Welcome, {user?.name}!
+          Welcome, {user?.firstName}!
         </h1>
         <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="mt-8 grid w-full gap-6">
@@ -36,9 +42,9 @@ export default function HomePage() {
                 </h2>
                 <div className="mb-6 flex flex-col items-center justify-between sm:flex-row">
                   <p className="text-gray-600">
-                    Name: {user?.name}
+                    Name: {user?.firstName}
                     <br />
-                    Email: {user?.email}
+                    Email: {user?.emailAddresses[0]?.emailAddress}
                   </p>
                   <Link href="user/following">Following</Link>
                   <Link href="user/settings">Edit Profile</Link>
@@ -64,11 +70,7 @@ export default function HomePage() {
                 <p className="m-0 flex w-full items-center rounded-lg bg-white p-4 shadow-md hover:bg-gray-100">
                   <BiMaleFemale />
                   <span className="ml-4 flex-1">
-                    See our{" "}
-                    {user.role === "CONTRIBUTOR" || user.role === "EDITOR"
-                      ? " other "
-                      : ""}{" "}
-                    contributors
+                    See our {contributorControls ? " other " : ""} contributors
                   </span>
                 </p>
               </Link>
@@ -88,7 +90,7 @@ export default function HomePage() {
                   <p className="text-gray-600">
                     {" "}
                     {recentArticles?.length
-                      ? user.articles.map((article) => (
+                      ? recentArticles.map((article) => (
                           <Link
                             href={`/articles/${article.slug}`}
                             key={article.id}

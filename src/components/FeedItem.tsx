@@ -1,14 +1,11 @@
 import format from "date-fns/format";
 import Image from "next/image";
-import { Article, User, Category } from "@prisma/client";
 import Typography from "./Typography";
 import Link from "./Link";
+import { RouterOutputs } from "~/utils/api";
 
 interface FeedItemProps {
-  article: Article & {
-    author: User;
-    categories: Category[];
-  };
+  article: RouterOutputs["articles"]["getArticlesByFollowing"]["items"][number];
 }
 
 export default function FeedItem({ article }: FeedItemProps) {

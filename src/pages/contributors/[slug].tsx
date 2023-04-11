@@ -8,18 +8,20 @@ import Loading from "~/components/Loading";
 import { Article } from "@prisma/client";
 import { List, ListItem } from "~/components/List";
 import Typography from "~/components/Typography";
-import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { BiMinusCircle, BiPlusCircle } from "react-icons/bi";
 import Button from "~/components/Button";
 import ArticleList from "~/components/ArticleList";
+import { useUser } from "@clerk/nextjs";
 
 const ContributorPage = () => {
   const { query } = useRouter();
-  const { data: sessionData } = useSession();
+
+  const { user } = useUser();
+
   const [slug, setSlug] = useState<string>(query?.slug?.toString() ?? "");
   const { data, isLoading } = api.user.getBySlug.useQuery(slug);
-  const isMyPage = sessionData?.user.id === data?.id;
+  const isMyPage = user?.id === data?.id;
 
   const { data: followingData } = api.follows.isFollowing.useQuery(
     data?.id ?? ""
@@ -45,7 +47,7 @@ const ContributorPage = () => {
       </Layout>
     );
   }
-  const { articles, ...user } = data;
+  const { articles } = data;
 
   if (!query.slug) {
     return (
@@ -73,13 +75,13 @@ const ContributorPage = () => {
         <>
           <Image
             className="rounded-full"
-            src={user.image ?? "/images/png/placeholder-user.png"}
-            alt={user.name ?? ""}
+            src={user?.profileImageUrl ?? "/images/png/placeholder-user.png"}
+            alt={user?.fullName ?? ""}
             width={100}
             height={100}
           />
           <Typography as="h1" variant="heading" className="mb-10">
-            Articles by {isMyPage ? "me" : user.name}
+            Articles by {isMyPage ? "me" : user?.fullName}
           </Typography>
           <Button
             variant="primary"

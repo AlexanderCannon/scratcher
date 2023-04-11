@@ -1,14 +1,14 @@
 import Image, { type StaticImageData } from "next/image";
-import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "~/components/Link";
 import Logo from "../../public/images/svg/logo-no-background.svg";
 import Typography from "./Typography";
 import Button from "./Button";
+import { SignInButton, SignOutButton, useUser, SignIn } from "@clerk/nextjs";
 
 const logo = Logo as StaticImageData;
 
 export default function Nav() {
-  const { data: sessionData } = useSession();
+  const { user, isSignedIn } = useUser();
 
   // const { data: account } = api.account.getById.useQuery(
   //   sessionData?.user.id ?? "",
@@ -26,7 +26,7 @@ export default function Nav() {
               <Link href="/" className="rounded">
                 <Image
                   className="h-10 w-10 rounded-full lg:hidden"
-                  src={sessionData?.user.image ?? logo}
+                  src={user?.profileImageUrl ?? logo}
                   width={40}
                   height={40}
                   alt="Logo"
@@ -43,12 +43,9 @@ export default function Nav() {
             <Link href="/about">About</Link>
           </div>
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            <Button
-              variant="text"
-              onClick={sessionData ? () => void signOut() : () => void signIn()}
-            >
-              {sessionData ? "Sign out" : "Sign in"}
-            </Button>
+            <span className="rounded rounded bg-transparent px-4 py-2 text-base font-semibold text-gray-800 hover:bg-gray-100 focus:shadow focus:outline-none">
+              {isSignedIn ? <SignOutButton /> : <SignInButton />}
+            </span>
           </div>
         </div>
       </div>
