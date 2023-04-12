@@ -8,6 +8,7 @@ import html from "remark-html";
 import Typography from "./Typography";
 import Loading from "./Loading";
 import Comments from "./Comments";
+import { BiCalendar } from "react-icons/bi";
 
 interface ArticleProps {
   id: string;
@@ -48,14 +49,14 @@ const Article = ({
   return (
     <div className="mx-auto w-full max-w-5xl px-4">
       <div
-        className="h-80 min-h-fit bg-cover bg-fixed bg-center bg-no-repeat md:h-96"
+        className="h-80 min-h-fit rounded bg-cover bg-fixed bg-center bg-no-repeat md:h-96"
         style={{
           backgroundImage: `url(${image})`,
           position: "relative",
         }}
       >
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 rounded"
           style={{
             backgroundColor: "rgba(0, 0, 0, 0.5)",
             zIndex: "1",
@@ -88,20 +89,29 @@ const Article = ({
         </div>
       </div>
       <Link href={`/contributors/${author.slug ?? ""}`} padding="p-0">
-        <div className="mb-2 flex items-end pt-2">
+        <div className="flex items-end py-4">
           <Image
             src={author.image ?? "/images/png/placeholder-user.png"}
             alt={author.name ?? "Mr. Cool"}
-            width={40}
-            height={40}
+            width={100}
+            height={100}
             className="rounded-full"
           />
-          <Typography variant="subheading">{author.name}</Typography>
+          <Typography variant="heading" className="pl-2">
+            {author.name}
+          </Typography>
         </div>
       </Link>
-      <Typography variant="body" className="text-gray-600">
-        {format(date, "MMMM do, yyyy")}
-      </Typography>
+      <span className="flex items-center">
+        <BiCalendar size={18} />
+        <Typography
+          variant="subheading"
+          textColor="text-gray-600"
+          className="ml-2"
+        >
+          Published on {format(date, "MMMM do, yyyy, hh:mma")}
+        </Typography>
+      </span>
       <article className="pa prose max-w-none bg-slate-100 p-6 lg:prose-xl">
         <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
       </article>
@@ -109,7 +119,7 @@ const Article = ({
         <Typography
           as="h2"
           variant="subheading"
-          className="ml-3 cursor-pointer font-medium text-gray-400 hover:text-gray-500"
+          className="ml-3 cursor-pointer font-medium  hover:text-blue-500"
         >
           Words supplied by {author.name ?? "Mr. Cool"}
         </Typography>
@@ -117,7 +127,7 @@ const Article = ({
       <Typography as="h2" variant="subheading">
         Tags:
       </Typography>
-      <ul className="flex">
+      <ul className="flex py-6">
         {categories.map((category) => (
           <li key={category.id}>
             <Link href={`/categories/${category.slug}`}>{category.name}</Link>

@@ -19,8 +19,8 @@ const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const variantClasses = {
-    primary: "bg-blue-500 hover:bg-blue-700 text-white",
-    secondary: "bg-white text-blue-500 hover:bg-gray-200 ",
+    primary: "bg-blue-500 hover:bg-blue-700 text-white shadow",
+    secondary: "bg-white text-blue-500 hover:bg-gray-200 shadow",
     text: "bg-transparent hover:bg-gray-100 text-gray-800 ",
   };
 
@@ -31,7 +31,7 @@ const Button: React.FC<ButtonProps> = ({
   };
 
   const baseClasses =
-    "font-bold rounded-full focus:outline-none focus:shadow-lg shadow uppercase tracking-wider";
+    "font-bold rounded-full focus:outline-none focus:shadow-lg uppercase tracking-wider";
   const variantClass = variantClasses[variant];
   const sizeClass = sizeClasses[size];
   const fullWidthClass = fullWidth ? "w-full" : "";

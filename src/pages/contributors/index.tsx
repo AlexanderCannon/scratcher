@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import PaginationButtons from "~/components/PaginationButtons";
 import Typography from "~/components/Typography";
+import ContributorProfile from "~/components/ContributorProfile";
 
 const Contributors = () => {
   const router = useRouter();
@@ -61,25 +62,9 @@ const Contributors = () => {
           <List direction="row">
             {currentPage?.map((user) => {
               return (
-                <Link href={`/contributors/${user.slug ?? ""}`} key={user.id}>
-                  <ListItem>
-                    <Image
-                      src={user.image ?? "/images/png/placeholder-user.png"}
-                      alt={user.name ?? "Mr. Cool"}
-                      width={40}
-                      height={40}
-                      className="rounded-full"
-                    />
-                    <Typography
-                      variant="subheading"
-                      as="h2"
-                      className="mb-2 cursor-pointer font-medium text-gray-400 hover:text-gray-500"
-                    >
-                      {user.name}
-                    </Typography>
-                    {user.bio && <Typography>{user.bio}</Typography>}
-                  </ListItem>
-                </Link>
+                // <Link href={`/contributors/${user.slug ?? ""}`} key={user.id}>
+                <ContributorProfile user={user} />
+                // </Link>
               );
             })}
           </List>

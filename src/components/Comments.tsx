@@ -87,7 +87,7 @@ export default function Comments({ articleId }: CommentsProps) {
       </Typography>
       {sessionData?.user.id ? (
         <form onSubmit={handleSubmit} className="mb-6">
-          <Typography>
+          <Typography className="py-4">
             <label htmlFor="comment">Add a comment:</label>
           </Typography>
           <TextArea
@@ -96,12 +96,14 @@ export default function Comments({ articleId }: CommentsProps) {
             value={newComment}
             onChange={(event) => setNewComment(event.target.value)}
           ></TextArea>
-          <Button fullWidth type="submit">
+          <Button fullWidth type="submit" className="my-6">
             Post
           </Button>
         </form>
       ) : (
-        <Button onClick={() => signIn()}>Log in to add a comment.</Button>
+        <Button fullWidth onClick={() => signIn()} className="my-6">
+          Log in to add a comment.
+        </Button>
       )}
       <ul>
         {currentPage ? (

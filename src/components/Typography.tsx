@@ -5,6 +5,7 @@ interface TypographyProps {
   as?: React.ElementType;
   variant?: "heading" | "subheading" | "body" | "title";
   className?: string;
+  textColor?: string;
   children: React.ReactNode;
 }
 
@@ -13,10 +14,11 @@ const Typography = ({
   variant = "body",
   className,
   children,
+  textColor = "text-gray-800",
   ...props
 }: TypographyProps) => {
   const classNames = [
-    "text-gray-800",
+    textColor,
     variant === "title" && "text-5xl font-bold",
     variant === "heading" && "text-3xl font-bold",
     variant === "subheading" && "text-xl font-bold",

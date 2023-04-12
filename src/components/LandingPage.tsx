@@ -1,7 +1,23 @@
+import { type FormEvent, useState } from "react";
 import Link from "~/components/Link";
 import { signIn } from "next-auth/react";
 import Button from "./Buttons/Button";
 export default function LandingPage() {
+  const [email, setEmail] = useState<string>("");
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    const response = await fetch("/api/auth/signin/email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+    if (response.ok) {
+      const { url } = await response.json();
+    }
+  };
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="bg-blue-500 py-10">

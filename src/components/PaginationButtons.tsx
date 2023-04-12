@@ -24,7 +24,7 @@ export default function ButtonSet({
       <button
         disabled={page === 0}
         onClick={handlePreviousClick}
-        className="w-1/2 rounded-l bg-blue-500  px-4 py-2 font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-1/2 rounded-l-full bg-blue-500  px-4 py-2 font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
         Previous
       </button>
@@ -32,7 +32,7 @@ export default function ButtonSet({
       <button
         disabled={!nextCursor}
         onClick={handleNextClick}
-        className="w-1/2 rounded-r bg-blue-500  px-4 py-2 font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-1/2 rounded-r-full bg-blue-500  px-4 py-2 font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
         Next
       </button>

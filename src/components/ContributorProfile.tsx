@@ -42,23 +42,29 @@ const ContributorProfile = ({ user }: ContributorProfileProps) => {
     <Card>
       <div className="mb-4 flex flex-col items-center md:flex-row">
         <div className="flex-shrink-0">
-          <Image
-            height={100}
-            width={100}
-            className="rounded-full"
-            src={user.image ?? "/images/png/placeholder-user.png"}
-            alt={user.name ?? "placeholder image"}
-          />
+          <Link padding="p-0" href={`/contributors/${user.slug}`}>
+            <Image
+              height={100}
+              width={100}
+              className="rounded-full"
+              src={user.image ?? "/images/png/placeholder-user.png"}
+              alt={user.name ?? "placeholder image"}
+            />
+          </Link>
         </div>
         <div className="ml-4">
-          <Link
-            padding="p-0"
-            href={`/users/${user.slug}`}
-            className="font-medium text-gray-900"
-          >
-            {user.name}
+          <Link padding="p-0" href={`/contributors/${user.slug}`}>
+            <Typography
+              variant="subheading"
+              as="h2"
+              className="hover:text-blue-500"
+            >
+              {user.name}
+            </Typography>
           </Link>
-          <p className="text-gray-500">{user.username}</p>
+          <Link padding="p-0" href={`/contributors/${user.slug}`}>
+            <p className="text-gray-500 hover:text-blue-500">{user.username}</p>
+          </Link>
         </div>
       </div>
       {user.bio && (
