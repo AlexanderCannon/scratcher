@@ -41,7 +41,8 @@ export default function HomePage() {
                     Role: {user?.role.toLocaleLowerCase()}
                   </p>
                   <Link padding="px-0 py-4" href="user/following">
-                    Following
+                    Following ({user?.followingCount}) Followers (
+                    {user?.followerCount})
                   </Link>
                   <Link padding="px-0 py-4" href="user/settings">
                     Edit Profile

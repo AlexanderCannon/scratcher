@@ -35,12 +35,13 @@ export const followsRouter = createTRPCRouter({
         },
       });
       if (!user) throw new Error("User not found");
-      return ctx.prisma.follow.create({
+      const follow = ctx.prisma.follow.create({
         data: {
           followingId: input,
           followerId: ctx.session.user.id,
         },
       });
+      return follow;
     }),
   unfollow: protectedProcedure
     .input(z.string())
@@ -51,7 +52,7 @@ export const followsRouter = createTRPCRouter({
         },
       });
       if (!user) throw new Error("User not found");
-      return ctx.prisma.follow.delete({
+      const unfollow = ctx.prisma.follow.delete({
         where: {
           followerId_followingId: {
             followingId: input,
@@ -59,6 +60,27 @@ export const followsRouter = createTRPCRouter({
           },
         },
       });
+      ctx.prisma.user.update({
+        where: {
+          id: ctx.session.user.id,
+        },
+        data: {
+          followingCount: {
+            increment: 1,
+          },
+        },
+      });
+      ctx.prisma.user.update({
+        where: {
+          id: input,
+        },
+        data: {
+          followerCount: {
+            increment: 1,
+          },
+        },
+      });
+      return unfollow;
     }),
 
   isFollowing: protectedProcedure

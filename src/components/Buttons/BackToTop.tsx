@@ -19,7 +19,7 @@ export default function BackToTop() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   return showSticky ? (
-    <div className="sticky bottom-8 right-6 self-end">
+    <div className="sticky bottom-8 right-6 mt-6 self-end">
       <Button
         type="button"
         aria-label="Back to top"

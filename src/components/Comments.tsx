@@ -56,6 +56,8 @@ export default function Comments({ articleId }: CommentsProps) {
               bio: "",
               emailVerified: date,
               phone: "",
+              followerCount: 0,
+              followingCount: 0,
             },
           });
         },

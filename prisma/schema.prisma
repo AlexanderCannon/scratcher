@@ -50,23 +50,25 @@ enum UserRole {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    username      String?   @unique
-    slug          String?   @unique
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    bio           String?
-    image         String?   @db.VarChar(500)
-    phone         String?
-    role          UserRole  @default(USER)
-    accounts      Account[]
-    sessions      Session[]
-    articles      Article[]
-    comments      Comment[]
-    following     Follow[]  @relation("Follower")
-    followers     Follow[]  @relation("Following")
-    Star          Star[]
+    id             String    @id @default(cuid())
+    username       String?   @unique
+    slug           String?   @unique
+    name           String?
+    email          String?   @unique
+    emailVerified  DateTime?
+    bio            String?
+    image          String?   @db.VarChar(500)
+    phone          String?
+    followerCount  Int       @default(0)
+    followingCount Int       @default(0)
+    role           UserRole  @default(USER)
+    accounts       Account[]
+    sessions       Session[]
+    articles       Article[]
+    comments       Comment[]
+    following      Follow[]  @relation("Follower")
+    followers      Follow[]  @relation("Following")
+    Star           Star[]
 }
 
 model VerificationToken {
