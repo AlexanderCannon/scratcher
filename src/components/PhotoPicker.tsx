@@ -4,6 +4,7 @@ import Input from "./Input";
 import Modal from "./Modal";
 import { type Basic } from "unsplash-js/dist/methods/photos/types";
 import Typography from "./Typography";
+import Button from "./Buttons/Button";
 
 const accessKey = "cKLowy_ifGyIzwvmSYWsgUme8DcrGzpzKi2TgVbAIeE";
 
@@ -58,12 +59,7 @@ export default function PhotoPicker({
           placeholder={placeHolder ?? "Search for photos"}
           onKeyDown={handleKeyDown}
         />
-        <button
-          className="ml-4 rounded bg-blue-500 px-4 py-2 text-white"
-          onClick={searchPhotos}
-        >
-          Search
-        </button>
+        <Button onClick={searchPhotos}>Search</Button>
       </div>
       <Modal isOpen={show} onClose={() => setShow(false)}>
         <div className="grid grid-cols-2 gap-4 overflow-y-scroll sm:grid-cols-4">

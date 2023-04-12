@@ -9,10 +9,10 @@ interface LayoutProps {
 
 const Layout = ({ children, title }: LayoutProps) => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="bg-white">
       <Head title={title} />
       <Nav />
-      <main className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-start bg-gray-100 px-4 py-10 pt-28 md:px-8">
+      <main className="mx-auto flex max-w-7xl flex-col items-center justify-start bg-gray-100 px-4 py-10 pt-28 md:px-8">
         {children}
         <BackToTop />
       </main>

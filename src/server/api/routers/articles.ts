@@ -17,6 +17,7 @@ export const articlesRouter = createTRPCRouter({
       take: 5,
       where: {
         authorId: ctx.session.user.id,
+        published: true,
       },
       orderBy: {
         createdAt: "desc",

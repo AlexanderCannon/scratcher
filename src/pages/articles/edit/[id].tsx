@@ -27,16 +27,13 @@ interface Overrides {
 }
 
 export default function Editor() {
-  const { query } = useRouter();
+  const router = useRouter();
 
-  if (!query.id) {
-    return (
-      <Layout>
-        <NotFound />
-      </Layout>
-    );
-  }
-  const id = typeof query.id === "string" ? query.id : query.id.join(", ");
+  const id = router.query.id
+    ? typeof router.query.id === "string"
+      ? router.query.id
+      : router.query.id.join(", ")
+    : "";
   const { data: articleData, isLoading } = api.articles.getById.useQuery(id, {
     staleTime: Infinity,
   });
@@ -65,8 +62,37 @@ export default function Editor() {
   const [showToast, setShowToast] = useState<boolean>(false);
 
   const updateArticle = api.articles.update.useMutation();
+  const createArticle = api.articles.create.useMutation();
   const saveArticle = async (overrides?: Overrides) => {
     setSaving(true);
+    if (!id) {
+      createArticle.mutate(
+        {
+          authorId: sessionData?.user.id ?? "",
+          title,
+          subtitle,
+          content,
+          image: fileUrl,
+          categories: articleCategories.map(({ id }) => id),
+          published: overrides?.published ?? published,
+        },
+        {
+          onSuccess: (data) => {
+            setSaving(false);
+            router.push(`/articles/edit/${data.id}`);
+            setShowToast(true);
+          },
+          onError: (error) => {
+            console.error(error);
+            setSaving(false);
+          },
+          onSettled: () => {
+            setSaving(false);
+          },
+        }
+      );
+      return;
+    }
     updateArticle.mutate(
       {
         authorId: sessionData?.user.id ?? "",
@@ -118,7 +144,7 @@ export default function Editor() {
     setFileUrl(url);
   };
 
-  if (!sessionData || !id) {
+  if (!sessionData) {
     return (
       <Layout>
         <NotFound />
@@ -126,7 +152,7 @@ export default function Editor() {
     );
   }
 
-  if (!articleData || isLoading) {
+  if (isLoading) {
     return (
       <Layout>
         <Loading />
@@ -135,12 +161,19 @@ export default function Editor() {
   }
   return (
     <Layout title="Edit your article">
-      <pre>{articleData.published ? "Published" : "Draft"}</pre>{" "}
-      <pre>
-        Created on {format(articleData.createdAt, "MMMM do yy")}, last updated
-        on{" "}
-        {format(articleData.createdAt || articleData.createdAt, "MMMM do yy")}
-      </pre>
+      {articleData && (
+        <>
+          <pre>{published ? "Published" : "Draft"}</pre>{" "}
+          <pre>
+            Created on {format(articleData.createdAt, "MMMM do yy")}, last
+            updated on{" "}
+            {format(
+              articleData.createdAt || articleData.createdAt,
+              "MMMM do yy"
+            )}
+          </pre>
+        </>
+      )}
       <input
         onChange={handleTitleChange}
         value={title}
@@ -171,7 +204,7 @@ export default function Editor() {
         <PhotoPicker
           onSelect={handleFileChange}
           placeHolder={
-            articleData.image ? "Replace your image" : "Add a cover photo"
+            articleData?.image ? "Replace your image" : "Add a cover photo"
           }
         />
         <div>
@@ -188,7 +221,7 @@ export default function Editor() {
           </Button>
         </div>
       </div>
-      {articleData.image && !fileUrl && (
+      {articleData?.image && !fileUrl && (
         <Image
           src={articleData.image}
           alt="heading image"
@@ -201,7 +234,7 @@ export default function Editor() {
       )}
       <MarkdownEditor
         setContent={setContent}
-        initialContent={articleData.content}
+        initialContent={articleData?.content}
       />
       <Toast
         visible={showToast}

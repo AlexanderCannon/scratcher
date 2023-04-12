@@ -7,6 +7,7 @@ import Loading from "~/components/Loading";
 import { Article } from "@prisma/client";
 import { List, ListItem } from "~/components/List";
 import Typography from "~/components/Typography";
+import ArticleList from "~/components/ArticleList";
 
 const ContributorPage = () => {
   const { data, isLoading } = api.user.get.useQuery();
@@ -38,19 +39,7 @@ const ContributorPage = () => {
           </Typography>
           <List>
             {articles.length > 0 ? (
-              articles.map((article: Article) => (
-                <ListItem key={article.id}>
-                  <Link href={`/articles/edit/${article.id}`}>
-                    {/* <Typography
-                    as="h2"
-                    variant="subheading"
-                    className="ml-3 cursor-pointer font-medium text-gray-400 hover:text-gray-500"
-                  > */}
-                    {article.title}
-                    {/* </Typography> */}
-                  </Link>
-                </ListItem>
-              ))
+              <ArticleList articles={articles} />
             ) : (
               <ListItem>
                 <Typography as="p" variant="body">

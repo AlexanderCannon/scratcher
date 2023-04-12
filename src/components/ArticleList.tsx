@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "~/components/Link";
 import Typography from "~/components/Typography";
 import Card from "~/components/Card";
+import Markdown from "~/components/Markdown";
 
 interface ArticleListProps {
   articles: (Article & {
@@ -17,7 +18,7 @@ export default function ArticleList({ articles }: ArticleListProps) {
   return (
     <>
       {articles.map((article) => (
-        <Card className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-4">
+        <Card className="grid grid-cols-1 gap-4 sm:grid-cols-4">
           {article.author && (
             <Link
               href={`/contributors/${article.author.slug}`}
@@ -52,7 +53,7 @@ export default function ArticleList({ articles }: ArticleListProps) {
             </Link>
             <Link href={`/articles/${article.slug}`}>
               <Typography>
-                {article.intro}...
+                <Markdown content={article.intro + "..."} />
                 <span className="ml-1 hover:text-blue-500"> Read More</span>
               </Typography>
             </Link>

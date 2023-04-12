@@ -2,7 +2,7 @@ import format from "date-fns/format";
 import Image from "next/image";
 import { Article, User, Category } from "@prisma/client";
 import Typography from "./Typography";
-import Button from "./Buttons/Button";
+import Markdown from "./Markdown";
 import Link from "./Link";
 
 interface FeedItemProps {
@@ -14,7 +14,7 @@ interface FeedItemProps {
 
 export default function FeedItem({ article }: FeedItemProps) {
   return (
-    <div className="mb-4 flex flex-col">
+    <div className="mb-6 flex w-full flex-col p-4 shadow">
       <div className="flex flex-row">
         <Link href={`/contributors/${article.author.slug}`} padding="p-0">
           <Image
@@ -43,8 +43,8 @@ export default function FeedItem({ article }: FeedItemProps) {
           {article.title}
         </Typography>
         <span className="text-gray-500">
-          {article.content.substring(0, 150)}...{" "}
-          <div>
+          <Markdown content={article.intro + "..."} />
+          <div className="mt-2">
             <Link href={`/articles/${article.slug}`}>Read more</Link>
             Categories:
             {article.categories.map((category) => (
