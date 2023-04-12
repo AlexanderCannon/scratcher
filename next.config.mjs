@@ -20,6 +20,7 @@ const config = {
       "loremflickr.com",
       "images.unsplash.com",
       "res.cloudinary.com",
+      "lh3.googleusercontent.com",
     ],
   },
 };
