@@ -27,6 +27,7 @@ export default function SettingsPage() {
   const { data: sessionData } = useSession();
   const { data: user } = api.user.get.useQuery();
   const updateProfile = api.user.update.useMutation();
+  const uploadImage = api.image.upload.useMutation();
 
   const [name, setName] = useState<string>(user?.name ?? "");
   const [email, setEmail] = useState<string>(user?.email ?? "");
@@ -76,12 +77,17 @@ export default function SettingsPage() {
     }
   };
 
-  const handleImageUpload = ([file]: File[]) => {
+  const handleImageUpload = async ([file]: File[]) => {
+    console.log(file);
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         if (e.target?.result) {
           setImage(e.target.result as string);
+          uploadImage.mutate({
+            file: e.target.result,
+            name: file.name,
+          });
         }
       };
       reader.readAsDataURL(file);
@@ -162,9 +168,11 @@ export default function SettingsPage() {
           className="rounded-full"
         />
         <div className="absolute left-0 top-0 h-full w-full rounded-full bg-gray-800 opacity-50"></div>
-        <button className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-transparent">
-          <BiPhotoAlbum size={30} color="white" />
-        </button>
+        <ImageUploader onUpload={handleImageUpload}>
+          <button className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-transparent">
+            <BiPhotoAlbum size={30} color="white" />
+          </button>
+        </ImageUploader>
       </div>
       <h1 className="mb-6 text-3xl font-semibold text-gray-800">
         Account Settings

@@ -81,20 +81,22 @@ const ContributorPage = () => {
           <Typography as="h1" variant="heading" className="mb-10">
             Articles by {isMyPage ? "me" : user.name}
           </Typography>
-          <Button
-            variant="primary"
-            role="button"
-            fullWidth
-            onClick={handleFollow}
-            className="mb-10"
-          >
-            <span className="m-0 flex w-full items-center rounded-l p-0">
-              {isFollowing ? <BiMinusCircle /> : <BiPlusCircle />}
-              <span className="ml-4 flex-1">
-                {isFollowing ? "Unfollow" : "Follow"}
+          {!isMyPage && (
+            <Button
+              variant="primary"
+              role="button"
+              fullWidth
+              onClick={handleFollow}
+              className="mb-10"
+            >
+              <span className="m-0 flex w-full items-center rounded-l p-0">
+                {isFollowing ? <BiMinusCircle /> : <BiPlusCircle />}
+                <span className="ml-4 flex-1">
+                  {isFollowing ? "Unfollow" : "Follow"}
+                </span>
               </span>
-            </span>
-          </Button>
+            </Button>
+          )}
           <List>
             <ArticleList articles={articles} />
           </List>

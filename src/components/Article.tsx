@@ -12,6 +12,7 @@ import Comments from "./Comments";
 interface ArticleProps {
   id: string;
   title: string;
+  subtitle?: string;
   image?: string;
   author: User;
   date: Date;
@@ -23,11 +24,12 @@ interface ArticleProps {
 const Article = ({
   id,
   title,
-  image,
+  image = "/images/png/placeholder-article.png",
   author,
   date,
   content,
   categories,
+  subtitle,
   comments = false,
 }: ArticleProps) => {
   const [htmlContent, setHtmlContent] = useState<string>("");
@@ -44,13 +46,44 @@ const Article = ({
 
   if (!htmlContent) return <Loading />;
   return (
-    <div className="mx-auto max-w-5xl px-4">
-      <div className="mb-8">
-        {image && <Image src={image} alt={title} width={1200} height={600} />}
+    <div className="mx-auto w-full max-w-5xl px-4">
+      <div
+        className="bg-cover bg-fixed bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url(${image})`,
+          height: "500px",
+          position: "relative",
+        }}
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: "1",
+          }}
+        ></div>
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url(${image})`,
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+            filter: "blur(10px)",
+            zIndex: "-1",
+          }}
+        ></div>
+        <div className="absolute left-1/2 top-1/2 z-10 w-2/3 -translate-x-1/2 -translate-y-1/2 transform text-center text-white">
+          <Typography
+            as="h1"
+            variant="title"
+            className="mb-2 w-full text-white"
+          >
+            {title}
+          </Typography>
+          {subtitle && <p className="text-lg">{subtitle}</p>}
+        </div>
       </div>
-      <Typography as="h1" variant="heading" className="mb-2">
-        {title}
-      </Typography>
       <Link href={`/contributors/${author.slug ?? ""}`} padding="p-0">
         <div className="mb-2 flex items-center">
           <Image

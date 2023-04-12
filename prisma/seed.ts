@@ -95,6 +95,7 @@ async function main() {
       await prisma.article.create({
         data: {
           title: faker.lorem.sentence(),
+          subtitle: faker.lorem.sentence(),
           content: articleOneContent,
           intro: articleOneContent.substring(0, 190),
           slug: faker.lorem.slug(),
@@ -107,6 +108,7 @@ async function main() {
       await prisma.article.create({
         data: {
           title: faker.lorem.sentence(),
+          subtitle: faker.lorem.sentence(),
           content: articleTwoContent,
           intro: articleTwoContent.substring(0, 190),
           slug: faker.lorem.slug(),

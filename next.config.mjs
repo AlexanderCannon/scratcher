@@ -19,7 +19,7 @@ const config = {
       "cdn.discordapp.com",
       "loremflickr.com",
       "images.unsplash.com",
-      "scratcher.twic.pics",
+      "res.cloudinary.com",
     ],
   },
 };

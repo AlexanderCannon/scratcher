@@ -38,6 +38,7 @@ export default function ArticlePage() {
         id={data.id}
         image={data.image || undefined}
         title={data.title}
+        subtitle={data.subtitle || undefined}
         content={data.content}
         author={data.author}
         categories={data.categories}

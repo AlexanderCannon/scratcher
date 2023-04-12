@@ -6,12 +6,14 @@ interface ImageUploaderProps {
   onUpload: (files: File[]) => void;
   placeHolder?: string;
   className?: string;
+  children?: React.ReactNode;
 }
 
 export default function ImageUploader({
   onUpload,
   placeHolder = "Upload an image",
   className,
+  children,
 }: ImageUploaderProps) {
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
     accept: {
@@ -32,9 +34,13 @@ export default function ImageUploader({
   return (
     <div {...getRootProps({ className: "dropzone" })}>
       <input {...getInputProps()} />
-      <Button className={className} fullWidth>
-        {acceptedFileItems.length === 0 ? placeHolder : acceptedFileItems}
-      </Button>
+      {children ? (
+        children
+      ) : (
+        <Button className={className ?? ""} fullWidth>
+          {acceptedFileItems.length === 0 ? placeHolder : acceptedFileItems}
+        </Button>
+      )}
     </div>
   );
 }

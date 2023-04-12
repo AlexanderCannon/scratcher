@@ -6,6 +6,7 @@ import { categoriesRouter } from "./routers/categories";
 import { starsRouter } from "./routers/stars";
 import { followsRouter } from "./routers/follows";
 import { commentsRouter } from "./routers/comments";
+import { imageRouter } from "./routers/image";
 
 /**
  * Root router for the API
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   follows: followsRouter,
   stars: starsRouter,
   user: userRouter,
+  image: imageRouter,
 });
 
 export type AppRouter = typeof appRouter;

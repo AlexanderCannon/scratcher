@@ -33,12 +33,14 @@ export default function ArticlePage() {
       </Layout>
     );
   }
+  console.log(data.subtitle);
   return (
     <Layout>
       <Article
         id={data.id}
         image={data.image || undefined}
         title={data.title}
+        subtitle={data.subtitle || undefined}
         content={data.content}
         author={data.author}
         categories={data.categories}

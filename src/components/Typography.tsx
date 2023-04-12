@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-interface TextProps {
+interface TypographyProps {
   as?: React.ElementType;
-  variant?: "heading" | "subheading" | "body";
+  variant?: "heading" | "subheading" | "body" | "title";
   className?: string;
   children: React.ReactNode;
 }
@@ -14,9 +14,10 @@ const Typography = ({
   className,
   children,
   ...props
-}: TextProps) => {
+}: TypographyProps) => {
   const classNames = [
     "text-gray-800",
+    variant === "title" && "text-5xl font-bold",
     variant === "heading" && "text-3xl font-bold",
     variant === "subheading" && "text-xl font-bold",
     variant === "body" && "text-base",

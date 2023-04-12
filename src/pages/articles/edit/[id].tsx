@@ -12,6 +12,7 @@ import Button from "~/components/Buttons/Button";
 import Select from "~/components/Select";
 import Loading from "~/components/Loading";
 import format from "date-fns/format";
+import Input from "~/components/Input";
 
 export default function Editor() {
   const { query } = useRouter();
@@ -35,12 +36,14 @@ export default function Editor() {
   useEffect(() => {
     const initialCategories = articleData?.categories ?? ([] as Category[]);
     setTitle(articleData?.title ?? "");
+    setSubtitle(articleData?.subtitle ?? "");
     setContent(articleData?.content ?? "");
     setFileUrl(articleData?.image ?? "");
     setPublished(articleData?.published ?? false);
     setArticleCategories(initialCategories);
   }, [articleData]);
   const [title, setTitle] = useState<string>("");
+  const [subtitle, setSubtitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [fileUrl, setFileUrl] = useState<string>();
   const [articleCategories, setArticleCategories] = useState<Category[]>([]);
@@ -132,8 +135,15 @@ export default function Editor() {
         className="w-full border-b border-none bg-transparent px-3 py-2 text-center text-5xl text-gray-700 focus:border-indigo-500 focus:outline-none"
       />
       <div className="bg- sticky top-16 z-40 w-full bg-white shadow">
+        <Input
+          value={subtitle}
+          onChange={(e) => setSubtitle(e.target.value)}
+          placeholder="Subtitle"
+          className="mb-2"
+        />
         {categoryData ? (
           <Select
+            className="mb-2"
             initialValue={articleCategories}
             placeholder="Select categories"
             onChange={setArticleCategories}

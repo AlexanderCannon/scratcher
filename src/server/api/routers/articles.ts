@@ -164,6 +164,7 @@ export const articlesRouter = createTRPCRouter({
     .input(
       z.object({
         title: z.string(),
+        subtitle: z.string().optional(),
         content: z.string(),
         authorId: z.string(),
         categories: z.array(z.string()),
@@ -175,6 +176,7 @@ export const articlesRouter = createTRPCRouter({
       return ctx.prisma.article.create({
         data: {
           title: input.title,
+          subtitle: input.subtitle,
           slug: input.title
             .toLocaleLowerCase()
             .replaceAll(" ", "-")
@@ -195,6 +197,7 @@ export const articlesRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         title: z.string(),
+        subtitle: z.string().optional(),
         content: z.string(),
         authorId: z.string(),
         categories: z.array(z.string()),
@@ -216,6 +219,7 @@ export const articlesRouter = createTRPCRouter({
         },
         data: {
           title: input.title,
+          subtitle: input.subtitle,
           slug: input.title
             .toLocaleLowerCase()
             .replaceAll(" ", "-")
@@ -237,6 +241,7 @@ export const articlesRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         title: z.string().optional(),
+        subtitle: z.string().optional(),
         content: z.string().optional(),
         authorId: z.string().optional(),
         categories: z.array(z.string()).optional(),
@@ -257,6 +262,7 @@ export const articlesRouter = createTRPCRouter({
         },
         data: {
           title: input.title,
+          subtitle: input.subtitle,
           slug:
             input.title &&
             input.title
