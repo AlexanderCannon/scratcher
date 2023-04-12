@@ -81,6 +81,9 @@ const ContributorPage = () => {
           <Typography as="h1" variant="heading" className="mb-10">
             Articles by {isMyPage ? "me" : user.name}
           </Typography>
+          <Typography as="h2" variant="subheading" className="mb-10">
+            {user.bio}
+          </Typography>
           {!isMyPage && (
             <Button
               variant="primary"

@@ -78,7 +78,6 @@ export default function SettingsPage() {
   };
 
   const handleImageUpload = async ([file]: File[]) => {
-    console.log(file);
     if (file) {
       const reader = new FileReader();
       reader.onload = async (e) => {

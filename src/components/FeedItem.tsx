@@ -15,8 +15,8 @@ interface FeedItemProps {
 export default function FeedItem({ article }: FeedItemProps) {
   return (
     <div className="mb-4 flex flex-col">
-      <Link href={`/contributors/${article.author.slug}`}>
-        <div className="flex flex-row">
+      <div className="flex flex-row">
+        <Link href={`/contributors/${article.author.slug}`} padding="p-0">
           <Image
             width={50}
             height={50}
@@ -24,16 +24,20 @@ export default function FeedItem({ article }: FeedItemProps) {
             src={article.author.image ?? "/images/png/placeholder-user.png"}
             alt={article.author.name ?? "placeholder"}
           />
-          <div className="ml-3 flex flex-col">
+        </Link>
+        <div className="ml-3 flex flex-col">
+          <Link href={`/contributors/${article.author.slug}`} padding="p-0">
             <Typography className="font-bold hover:text-blue-500">
               {article.author.name}
             </Typography>
+          </Link>
+          <Link href={`/articles/${article.slug}`} padding="p-0">
             <span className="text-sm text-gray-500 hover:text-blue-500">
               {format(article.createdAt, "MMMM do, yyyy")}
             </span>
-          </div>
+          </Link>
         </div>
-      </Link>
+      </div>
       <div className="mt-3 flex flex-col">
         <Typography className=" hover:text-blue-500">
           {article.title}

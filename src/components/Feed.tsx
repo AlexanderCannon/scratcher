@@ -29,6 +29,7 @@ export default function Feed() {
   return (
     <>
       <h2 className="mb-2 text-xl font-semibold text-gray-800">Your feed</h2>
+      <hr className="p-2" />
       {currentPage.map((article) => (
         <FeedItem article={article} key={article.id} />
       ))}

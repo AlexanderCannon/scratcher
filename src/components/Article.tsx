@@ -48,10 +48,9 @@ const Article = ({
   return (
     <div className="mx-auto w-full max-w-5xl px-4">
       <div
-        className="bg-cover bg-fixed bg-center bg-no-repeat"
+        className="h-80 min-h-fit bg-cover bg-fixed bg-center bg-no-repeat md:h-96"
         style={{
           backgroundImage: `url(${image})`,
-          height: "500px",
           position: "relative",
         }}
       >
@@ -73,19 +72,23 @@ const Article = ({
             zIndex: "-1",
           }}
         ></div>
-        <div className="absolute left-1/2 top-1/2 z-10 w-2/3 -translate-x-1/2 -translate-y-1/2 transform text-center text-white">
+        <div className="absolute left-1/2 top-1/2 z-10 w-11/12 -translate-x-1/2 -translate-y-1/2 transform text-center text-white md:w-2/3">
           <Typography
             as="h1"
             variant="title"
-            className="mb-2 w-full text-white"
+            className="mb-8 w-full text-white"
           >
             {title}
           </Typography>
-          {subtitle && <p className="text-lg">{subtitle}</p>}
+          {subtitle && (
+            <Typography className="italic text-white" variant="heading">
+              {subtitle}
+            </Typography>
+          )}
         </div>
       </div>
       <Link href={`/contributors/${author.slug ?? ""}`} padding="p-0">
-        <div className="mb-2 flex items-center">
+        <div className="mb-2 flex items-end pt-2">
           <Image
             src={author.image ?? "/images/png/placeholder-user.png"}
             alt={author.name ?? "Mr. Cool"}
@@ -95,10 +98,10 @@ const Article = ({
           />
           <Typography variant="subheading">{author.name}</Typography>
         </div>
-        <Typography variant="body" className="text-gray-600">
-          {format(date, "MMMM do, yyyy")}
-        </Typography>
       </Link>
+      <Typography variant="body" className="text-gray-600">
+        {format(date, "MMMM do, yyyy")}
+      </Typography>
       <article className="pa prose max-w-none bg-slate-100 p-6 lg:prose-xl">
         <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
       </article>
@@ -114,7 +117,7 @@ const Article = ({
       <Typography as="h2" variant="subheading">
         Tags:
       </Typography>
-      <ul>
+      <ul className="flex">
         {categories.map((category) => (
           <li key={category.id}>
             <Link href={`/categories/${category.slug}`}>{category.name}</Link>

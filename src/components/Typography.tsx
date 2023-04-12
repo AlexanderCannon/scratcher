@@ -33,11 +33,4 @@ const Typography = ({
   );
 };
 
-Typography.propTypes = {
-  as: PropTypes.elementType,
-  variant: PropTypes.oneOf(["heading", "subheading", "body"]),
-  className: PropTypes.string,
-  children: PropTypes.node.isRequired,
-};
-
 export default Typography;

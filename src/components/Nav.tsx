@@ -57,7 +57,7 @@ export default function Nav() {
           </div>
         </div>
       </nav>
-      <div className="fixed left-6 top-20">
+      <div className="fixed left-6 top-20 z-50">
         <BackOnePage />
       </div>
     </>

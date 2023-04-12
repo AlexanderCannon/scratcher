@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { Category } from "@prisma/client";
+import format from "date-fns/format";
 import Layout from "~/components/Layout";
 import { api } from "~/utils/api";
 import MarkdownEditor from "~/components/MarkdownEditor";
@@ -11,8 +12,19 @@ import PhotoPicker from "~/components/PhotoPicker";
 import Button from "~/components/Buttons/Button";
 import Select from "~/components/Select";
 import Loading from "~/components/Loading";
-import format from "date-fns/format";
+import Toast from "~/components/Toast";
 import Input from "~/components/Input";
+
+interface Overrides {
+  authorId?: string;
+  id?: string;
+  title?: string;
+  subtitle?: string;
+  content?: string;
+  image?: string;
+  categories?: Category[];
+  published?: boolean;
+}
 
 export default function Editor() {
   const { query } = useRouter();
@@ -32,7 +44,6 @@ export default function Editor() {
     staleTime: Infinity,
   });
   const { data: sessionData } = useSession();
-
   useEffect(() => {
     const initialCategories = articleData?.categories ?? ([] as Category[]);
     setTitle(articleData?.title ?? "");
@@ -51,23 +62,26 @@ export default function Editor() {
   const [published, setPublished] = useState<boolean>(
     articleData?.published ?? false
   );
+  const [showToast, setShowToast] = useState<boolean>(false);
 
   const updateArticle = api.articles.update.useMutation();
-  const saveArticle = async () => {
+  const saveArticle = async (overrides?: Overrides) => {
     setSaving(true);
     updateArticle.mutate(
       {
         authorId: sessionData?.user.id ?? "",
         id: articleData?.id ?? "",
         title,
+        subtitle,
         content,
         image: fileUrl,
         categories: articleCategories.map(({ id }) => id),
-        published,
+        published: overrides?.published ?? published,
       },
       {
         onSuccess: () => {
           setSaving(false);
+          setShowToast(true);
         },
         onError: (error) => {
           console.error(error);
@@ -86,7 +100,7 @@ export default function Editor() {
 
   const handlePublish = () => {
     setPublished(!published);
-    saveArticle();
+    saveArticle({ published: !published });
   };
 
   const handleSave = () => saveArticle();
@@ -188,6 +202,12 @@ export default function Editor() {
       <MarkdownEditor
         setContent={setContent}
         initialContent={articleData.content}
+      />
+      <Toast
+        visible={showToast}
+        message="Article saved successfully!"
+        type="success"
+        onClose={() => setShowToast(false)}
       />
     </Layout>
   );

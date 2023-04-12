@@ -33,7 +33,6 @@ export default function ArticlePage() {
       </Layout>
     );
   }
-  console.log(data.subtitle);
   return (
     <Layout>
       <Article

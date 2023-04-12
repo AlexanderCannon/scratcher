@@ -20,7 +20,6 @@ export const imageRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("input", input);
       const { file, name } = input;
       const { user } = ctx.session;
       const rawImage = file.toString().split(",")[1];
@@ -56,7 +55,6 @@ export const imageRouter = createTRPCRouter({
               image: url,
             },
           });
-          console.log("res", result);
           return result;
         }
       );
