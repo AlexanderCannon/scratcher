@@ -8,7 +8,9 @@ import html from "remark-html";
 import Typography from "./Typography";
 import Loading from "./Loading";
 import Comments from "./Comments";
+import ParallaxBox from "./ParallaxBox";
 import { BiCalendar } from "react-icons/bi";
+import ParserBlock from "markdown-it/lib/parser_block";
 
 interface ArticleProps {
   id: string;
@@ -48,46 +50,16 @@ const Article = ({
   if (!htmlContent) return <Loading />;
   return (
     <div className="mx-auto w-full max-w-5xl px-4">
-      <div
-        className="h-80 min-h-fit rounded bg-cover bg-fixed bg-center bg-no-repeat md:h-96"
-        style={{
-          backgroundImage: `url(${image})`,
-          position: "relative",
-        }}
-      >
-        <div
-          className="absolute inset-0 rounded"
-          style={{
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: "1",
-          }}
-        ></div>
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `url(${image})`,
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
-            filter: "blur(10px)",
-            zIndex: "-1",
-          }}
-        ></div>
-        <div className="absolute left-1/2 top-1/2 z-10 w-11/12 -translate-x-1/2 -translate-y-1/2 transform text-center text-white md:w-2/3">
-          <Typography
-            as="h1"
-            variant="title"
-            className="mb-8 w-full text-white"
-          >
-            {title}
+      <ParallaxBox image={image}>
+        <Typography as="h1" variant="title" className="mb-8 w-full text-white">
+          {title}
+        </Typography>
+        {subtitle && (
+          <Typography className="italic text-white" variant="heading">
+            {subtitle}
           </Typography>
-          {subtitle && (
-            <Typography className="italic text-white" variant="heading">
-              {subtitle}
-            </Typography>
-          )}
-        </div>
-      </div>
+        )}
+      </ParallaxBox>
       <Link href={`/contributors/${author.slug ?? ""}`} padding="p-0">
         <div className="flex items-end py-4">
           <Image
