@@ -53,7 +53,7 @@ export default function LandingPage() {
               offering readers a more engaging and personalized experience.
             </Typography>
             <Link href={"/articles"} padding="p-0">
-              <Button>Learn More</Button>
+              <Button>Start reading</Button>
             </Link>
           </div>
           <div className="flex flex-col items-center justify-center">
