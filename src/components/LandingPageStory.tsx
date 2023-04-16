@@ -61,7 +61,7 @@ export default function LandingPageStory() {
   const [fourthItemVisible, setFourthItemVisible] = useState(false);
 
   return (
-    <section className="grid w-full grid-cols-1 items-center justify-center gap-6 pt-20 md:gap-12">
+    <section className="grid w-full grid-cols-1 items-center justify-center gap-6 md:gap-12">
       <StoryItemPair setVisible={setFirstItemVisible}>
         <LeftItem animate={firstItemVisible}>
           <Typography

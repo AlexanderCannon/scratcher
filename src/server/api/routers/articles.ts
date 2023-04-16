@@ -335,4 +335,11 @@ export const articlesRouter = createTRPCRouter({
         nextCursor,
       };
     }),
+  countArticles: publicProcedure.query(async ({ ctx }) => {
+    return ctx.prisma.article.count({
+      where: {
+        published: true,
+      },
+    });
+  }),
 });

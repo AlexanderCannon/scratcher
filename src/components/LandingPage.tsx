@@ -6,6 +6,7 @@ import ParallaxBox from "./ParallaxBox";
 import Typography from "./Typography";
 import LandingPageStory from "./LandingPageStory";
 import { api } from "~/utils/api";
+import CountUpTo from "./CountUpTo";
 
 export default function LandingPage() {
   const [email, setEmail] = useState<string>("");
@@ -14,7 +15,8 @@ export default function LandingPage() {
 
   const subscribe = api.subscriber.subscribe.useMutation();
 
-  // const;
+  const { data: articles } = api.articles.countArticles.useQuery();
+  const { data: authors } = api.user.countAuthors.useQuery();
 
   const handleSignIn = () => signIn();
 
@@ -79,6 +81,13 @@ export default function LandingPage() {
               with a permanent record of their writing on the blockchain, while
               offering readers a more engaging and personalized experience.
             </Typography>
+            <Typography variant="subheading" className="mb-6">
+              <CountUpTo
+                end={articles || 0}
+                duration={100000}
+                after="articles already published"
+              />
+            </Typography>
             <Link href={"/articles"} padding="p-0">
               <Button>Start reading</Button>
             </Link>
@@ -95,6 +104,14 @@ export default function LandingPage() {
               Our platform features a diverse range of talented contributors
               from around the world, providing unique perspectives and insights
               on the latest trends and topics across various industries.
+            </Typography>
+            <Typography variant="subheading" className="mb-6">
+              <CountUpTo
+                end={authors || 0}
+                duration={100000}
+                delay={1}
+                after="Authors already on Scratcher"
+              />
             </Typography>
             <Link href={"/contributors"} padding="p-0">
               <Button>Learn More</Button>

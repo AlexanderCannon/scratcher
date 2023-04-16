@@ -128,4 +128,13 @@ export const userRouter = createTRPCRouter({
         data,
       });
     }),
+  countAuthors: publicProcedure.query(async ({ ctx }) => {
+    return ctx.prisma.user.count({
+      where: {
+        role: {
+          in: [UserRole.CONTRIBUTOR, UserRole.EDITOR],
+        },
+      },
+    });
+  }),
 });
