@@ -59,10 +59,8 @@ export default function Feed() {
   }, []);
 
   return (
-    <div className="rounded bg-white pt-6 shadow">
-      <h2 className="mb-2 ml-6 text-xl font-semibold text-gray-800">
-        Your feed
-      </h2>
+    <div className="bg rounded bg-slate-700 pt-6 shadow">
+      <h2 className="mb-2 ml-6 text-xl font-semibold text-white">Your feed</h2>
       {posts ? (
         posts.map((article) => <FeedItem article={article} key={article.id} />)
       ) : (

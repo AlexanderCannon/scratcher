@@ -292,11 +292,21 @@ const TermsOfServicePage = () => {
           We accept the following forms of payment:
         </Typography>
         <ul>
-          <li>Visa</li>
-          <li>Mastercard</li>
-          <li>American Express</li>
-          <li>Discover</li>
-          <li>PayPal</li>
+          <li>
+            <Typography>Visa</Typography>
+          </li>
+          <li>
+            <Typography>Mastercard</Typography>
+          </li>
+          <li>
+            <Typography>American Express</Typography>
+          </li>
+          <li>
+            <Typography>Discover</Typography>
+          </li>
+          <li>
+            <Typography>PayPal</Typography>
+          </li>
         </ul>
         <Typography>
           You agree to provide current, complete, and accurate purchase and

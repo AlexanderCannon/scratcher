@@ -21,7 +21,6 @@ export default function FeedItem({ article }: FeedItemProps) {
     const clickedElement = event.target as Element;
     event.stopPropagation();
     event.preventDefault();
-    console.log(clickedElement.tagName);
     if (clickedElement.tagName !== "IMG" && clickedElement.tagName !== "A") {
       router.push(`/articles/${article.slug}`);
     }
@@ -29,7 +28,7 @@ export default function FeedItem({ article }: FeedItemProps) {
 
   return (
     <div
-      className="flex w-full cursor-pointer flex-col p-4 pt-6 shadow hover:bg-gray-200"
+      className="flex w-full cursor-pointer flex-col from-gray-800 via-slate-950 to-blue-900 p-4 pt-6 shadow hover:bg-gradient-to-br"
       onClick={handleClick}
     >
       <div className="flex flex-row">
@@ -43,15 +42,14 @@ export default function FeedItem({ article }: FeedItemProps) {
           />
         </NextLink>
         <div className="ml-3 flex flex-col">
-          <NextLink
-            href={`/contributors/${article.author.slug}`}
-            className="font-bold hover:text-blue-500"
-          >
-            {article.author.name}
+          <NextLink href={`/contributors/${article.author.slug}`}>
+            <Typography className="font-bold hover:text-blue-500">
+              {article.author.name}
+            </Typography>
           </NextLink>
           <NextLink
             href={`/articles/${article.slug}`}
-            className="text-sm text-gray-500 hover:text-blue-500"
+            className="text-sm text-gray-300 hover:text-blue-500"
           >
             {format(article.createdAt, "MMMM do, yyyy")}
           </NextLink>
@@ -61,7 +59,7 @@ export default function FeedItem({ article }: FeedItemProps) {
         <Typography className=" hover:text-blue-500">
           {article.title}
         </Typography>
-        <span className="text-gray-500">
+        <span className="text-gray-200">
           <Markdown content={article.intro + "..."} />
           <div className="mt-2">
             <Link href={`/articles/${article.slug}`} padding="p-0">

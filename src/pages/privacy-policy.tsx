@@ -4,7 +4,7 @@ import Layout from "~/components/Layout";
 const PrivacyPolicyPage = () => {
   return (
     <Layout>
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 gap-4 text-white">
         <strong>
           <span data-custom-className="title">
             <span className="question">PRIVACY POLICY</span>{" "}

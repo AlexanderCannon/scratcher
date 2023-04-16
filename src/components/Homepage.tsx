@@ -18,8 +18,8 @@ export default function HomePage() {
     user.role === "CONTRIBUTOR" || user.role === "EDITOR";
   return (
     <>
-      <div className="w-full flex-grow bg-gray-100">
-        <h1 className="mb-6 text-3xl font-semibold text-gray-800">
+      <div className="w-full flex-grow">
+        <h1 className="mb-6 text-3xl font-semibold text-white">
           Welcome, {user?.name}!
         </h1>
         <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -31,11 +31,11 @@ export default function HomePage() {
               <Card>
                 <div className="items-left flex flex-col flex-wrap justify-between">
                   <Link padding="p-0" href="user/settings">
-                    <h2 className="mb-2 text-xl font-semibold text-gray-800 hover:text-blue-500">
+                    <h2 className="mb-2 text-xl font-semibold text-gray-300 hover:text-blue-500">
                       Account Details
                     </h2>
                   </Link>
-                  <p className="capitalize text-gray-600">
+                  <p className="capitalize text-gray-200">
                     Name: {user?.name}
                     <br />
                     Role: {user?.role.toLocaleLowerCase()}
@@ -51,14 +51,14 @@ export default function HomePage() {
               </Card>
               {contributorControls && (
                 <Link href="/articles/new" padding="p-0">
-                  <p className="m-0 flex items-center rounded-lg bg-white p-4 shadow-md hover:bg-gray-100">
+                  <p className="m-0 flex items-center rounded-lg bg-slate-700 p-4 shadow-md hover:bg-gray-100">
                     <BiPlus />
                     <span className="ml-4 flex-1">Create a new article</span>
                   </p>
                 </Link>
               )}
               <Link href={"/articles"} padding="p-0">
-                <p className="m-0 flex items-center rounded-lg bg-white p-4 shadow-md hover:bg-gray-100">
+                <p className="m-0 flex items-center rounded-lg bg-slate-700 p-4 shadow-md hover:bg-gray-100">
                   <BiListUl />
                   <span className="ml-4 flex-1">
                     Read articles by our contributors
@@ -66,7 +66,7 @@ export default function HomePage() {
                 </p>
               </Link>
               <Link href={"/contributors"} padding="p-0">
-                <p className="m-0 flex w-full items-center rounded-lg bg-white p-4 shadow-md hover:bg-gray-100">
+                <p className="m-0 flex w-full items-center rounded-lg bg-slate-700 p-4 shadow-md hover:bg-gray-100">
                   <BiMaleFemale />
                   <span className="ml-4 flex-1">
                     See our{" "}
@@ -79,7 +79,7 @@ export default function HomePage() {
               </Link>
               {contributorControls && (
                 <Link href={`/articles/by-me`} padding="p-0">
-                  <p className="flex w-full items-center rounded-lg bg-white p-4 shadow-md hover:bg-gray-100">
+                  <p className="flex w-full items-center rounded-lg bg-slate-700 p-4 shadow-md hover:bg-gray-100">
                     <BiBookOpen />
                     <span className="ml-4 flex-1">View all of my articles</span>
                   </p>
@@ -89,9 +89,9 @@ export default function HomePage() {
                 <Card>
                   <Link
                     href={"/articles/by-me"}
-                    className="text-lg font-semibold text-gray-800"
+                    className="text-lg font-semibold text-gray-200"
                   >
-                    Your most recent articles
+                    Your recent articles
                   </Link>
                   <div className="flex flex-col">
                     {recentArticles?.length ? (

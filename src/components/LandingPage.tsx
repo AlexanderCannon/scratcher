@@ -1,43 +1,70 @@
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useState, ChangeEvent } from "react";
 import Link from "~/components/Link";
 import { signIn } from "next-auth/react";
 import Button from "./Buttons/Button";
 import ParallaxBox from "./ParallaxBox";
 import Typography from "./Typography";
+import LandingPageStory from "./LandingPageStory";
+import { api } from "~/utils/api";
 
 export default function LandingPage() {
   const [email, setEmail] = useState<string>("");
+  const [subscribed, setSubscribed] = useState<boolean>(false);
+  const [error, setError] = useState<string>();
+
+  const subscribe = api.subscriber.subscribe.useMutation();
+
+  // const;
+
+  const handleSignIn = () => signIn();
+
+  const handleSetEmail = (event: ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  };
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    const response = await fetch("/api/auth/signin/email", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email }),
-    });
-    if (response.ok) {
-      const { url } = await response.json();
+    if (email && !subscribed) {
+      try {
+        const success = await subscribe.mutateAsync(email);
+        if (success.createdAt) {
+          setSubscribed(true);
+          setError(undefined);
+        }
+      } catch (error: any) {
+        console.log(error);
+        try {
+          const parsed = JSON.parse(error.message);
+          if (parsed.length) {
+            const errors = parsed
+              .map(({ message }: { message: string }) => message)
+              .join(", ");
+            setError(errors);
+          }
+        } catch (e) {
+          return setError("This address is already subscribed.");
+        }
+      }
     }
   };
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="bg-blue-500 py-0">
-        <ParallaxBox image={"/images/png/sermon.png"}>
-          <h1 className="mb-4 text-center text-4xl font-bold text-white md:text-6xl">
+    <div className="min-h-screen">
+      <section className="bg-blue-500 py-0">
+        <ParallaxBox image={"/images/png/tablet.png"}>
+          <h1 className="motion-safe:animate-fadeIn mb-4 text-center text-4xl font-bold text-white md:text-6xl">
             Welcome to the Blockchain Revolution
           </h1>
           <Typography className="mb-8 text-center text-lg text-white md:text-2xl">
             Blockchain is changing the the way creators can control their
             content, it's time to join the movement.
           </Typography>
-          <Button variant="secondary" onClick={void signIn}>
+          <Button variant="secondary" onClick={handleSignIn}>
             Get Started
           </Button>
         </ParallaxBox>
-      </div>
-      <div className="container mx-auto py-16">
+      </section>
+      <section className="container mx-auto py-16">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           <div className="flex flex-col items-center justify-center">
             <Typography
@@ -74,8 +101,9 @@ export default function LandingPage() {
             </Link>
           </div>
         </div>
-      </div>
-      <div className="bg-white py-16">
+      </section>
+      <LandingPageStory />
+      <section className="bg-gray-700 py-16">
         <div className="container mx-auto">
           <Typography
             as="h2"
@@ -88,15 +116,28 @@ export default function LandingPage() {
             Sign up for our newsletter to stay up-to-date on the latest
             blockchain news and events.
           </Typography>
-          <form className="flex flex-col items-center justify-center">
+          <form
+            className="flex flex-col items-center justify-center"
+            onSubmit={handleSubmit}
+          >
             <div className="mb-4 w-full md:w-1/2">
+              <Typography
+                className={`mb-2 ${error ? "bg-yellow-300" : ""}  p-2`}
+                textColor="text-gray-800"
+              >
+                {error ? <span>🚨 {error}</span> : <span>&nbsp;</span>}
+              </Typography>
+
               <label
-                className="mb-2 block font-bold text-gray-700"
+                className="mb-2 block font-bold text-gray-200"
                 htmlFor="email"
               >
                 Email Address
               </label>
               <input
+                disabled={subscribed}
+                value={email}
+                onChange={handleSetEmail}
                 className="focus:shadow-outline w-full appearance-none rounded border border-gray-400 px-3 py-2 leading-tight text-gray-700 focus:outline-none"
                 id="email"
                 type="email"
@@ -106,12 +147,14 @@ export default function LandingPage() {
             <button
               className="hover:bg rounded-full bg-blue-500 px-6 py-3 font-bold uppercase tracking-wider text-white shadow-lg"
               type="submit"
+              disabled={subscribed}
             >
-              Sign Up
+              {subscribed ? "You're in!" : "Sign Up"}
             </button>
           </form>
         </div>
-      </div>
+      </section>
+
       <div>
         <div className="sp grid grid-cols-1 gap-6 pt-6">
           <ParallaxBox image={"/images/png/sermon.png"}>

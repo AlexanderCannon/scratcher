@@ -11,16 +11,11 @@ const logo = Logo as StaticImageData;
 export default function Nav() {
   const { data: sessionData } = useSession();
 
-  // const { data: account } = api.account.getById.useQuery(
-  //   sessionData?.user.id ?? "",
-  //   {
-  //     enabled: sessionData?.user !== undefined,
-  //   }
-  // );
+  const signInOrOut = () => (sessionData ? signOut() : signIn());
 
   return (
     <>
-      <nav className="fixed top-0 z-50 w-full bg-white shadow">
+      <nav className="fixed top-0 z-50 w-full bg-slate-700 shadow">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 justify-between align-middle">
             <div className="flex">
@@ -45,12 +40,7 @@ export default function Nav() {
               <Link href="/about">About</Link>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:items-center">
-              <Button
-                variant="text"
-                onClick={
-                  sessionData ? () => void signOut() : () => void signIn()
-                }
-              >
+              <Button variant="text" onClick={signInOrOut}>
                 {sessionData ? "Sign out" : "Sign in"}
               </Button>
             </div>

@@ -14,7 +14,7 @@ const Typography = ({
   variant = "body",
   className,
   children,
-  textColor = "text-gray-800",
+  textColor = "text-white",
   ...props
 }: TypographyProps) => {
   const classNames = [

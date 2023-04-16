@@ -10,7 +10,6 @@ import Loading from "./Loading";
 import Comments from "./Comments";
 import ParallaxBox from "./ParallaxBox";
 import { BiCalendar } from "react-icons/bi";
-import ParserBlock from "markdown-it/lib/parser_block";
 
 interface ArticleProps {
   id: string;
@@ -60,32 +59,39 @@ const Article = ({
           </Typography>
         )}
       </ParallaxBox>
-      <Link href={`/contributors/${author.slug ?? ""}`} padding="p-0">
-        <div className="flex items-end py-4">
-          <Image
-            src={author.image ?? "/images/png/placeholder-user.png"}
-            alt={author.name ?? "Mr. Cool"}
-            width={100}
-            height={100}
-            className="rounded-full"
-          />
-          <Typography variant="heading" className="pl-2">
-            {author.name}
+      <article className="pa max-w-none bg-gradient-to-br from-slate-300 via-slate-200 to-gray-200 p-6 dark:bg-slate-700">
+        <Link href={`/contributors/${author.slug ?? ""}`} padding="p-0">
+          <div className="flex items-end py-4">
+            <Image
+              src={author.image ?? "/images/png/placeholder-user.png"}
+              alt={author.name ?? "Mr. Cool"}
+              width={100}
+              height={100}
+              className="rounded-full"
+            />
+            <Typography
+              variant="heading"
+              className="pl-2"
+              textColor="text-black"
+            >
+              {author.name}
+            </Typography>
+          </div>
+        </Link>
+        <span className="flex items-center">
+          <BiCalendar size={18} color="#1F2937" />
+          <Typography
+            variant="subheading"
+            textColor="text-gray-800"
+            className="ml-2"
+          >
+            Published on {format(date, "MMMM do, yyyy, hh:mma")}
           </Typography>
-        </div>
-      </Link>
-      <span className="flex items-center">
-        <BiCalendar size={18} />
-        <Typography
-          variant="subheading"
-          textColor="text-gray-600"
-          className="ml-2"
-        >
-          Published on {format(date, "MMMM do, yyyy, hh:mma")}
-        </Typography>
-      </span>
-      <article className="pa prose max-w-none bg-slate-100 p-6 lg:prose-xl">
-        <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+        </span>
+        <div
+          dangerouslySetInnerHTML={{ __html: htmlContent }}
+          className="prose prose-zinc w-full dark:prose-invert lg:prose-xl"
+        />
       </article>
       <Link href={`/contributors/${author.slug ?? ""}`}>
         <Typography

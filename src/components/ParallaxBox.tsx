@@ -1,5 +1,3 @@
-import Typography from "./Typography";
-
 interface ParallaxBoxProps {
   image: string;
   children: React.ReactNode;
