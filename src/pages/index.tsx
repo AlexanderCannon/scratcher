@@ -15,9 +15,11 @@ const Home: NextPage = () => {
       enabled: sessionData?.user !== undefined,
     }
   );
-  return (
+  return !sessionData || !sessionData.user ? (
+    <LandingPage />
+  ) : (
     <Layout>
-      {!sessionData || !sessionData.user ? <LandingPage /> : <HomePage />}
+      <HomePage />
     </Layout>
   );
 };

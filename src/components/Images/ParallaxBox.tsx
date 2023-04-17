@@ -6,7 +6,7 @@ interface ParallaxBoxProps {
 export default function ParallaxBox({ image, children }: ParallaxBoxProps) {
   return (
     <div
-      className="h-80 min-h-fit rounded bg-cover bg-fixed bg-bottom bg-no-repeat md:h-tt"
+      className="h-80 min-h-fit rounded bg-cover bg-fixed bg-center bg-no-repeat md:h-tt"
       style={{
         backgroundImage: `url(${image})`,
         position: "relative",

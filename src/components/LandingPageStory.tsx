@@ -48,7 +48,7 @@ function StoryItemPair({ children, setVisible }: StoryItemPairProps) {
   return (
     <div
       ref={ref}
-      className="grid w-full grid-cols-2 items-center justify-center gap-6 md:gap-12"
+      className="grid w-full grid-cols-2 items-center justify-center"
     >
       {children}
     </div>

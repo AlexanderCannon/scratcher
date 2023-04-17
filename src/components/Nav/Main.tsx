@@ -1,12 +1,9 @@
 import Image, { type StaticImageData } from "next/image";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "~/components/Link";
-import Logo from "../../public/images/svg/logo-no-background.svg";
-import Typography from "./Typography";
-import Button from "./Buttons/Button";
-import BackOnePage from "./Buttons/BackOnePage";
-
-const logo = Logo as StaticImageData;
+import NextLink from "next/link";
+import Button from "../Buttons/Button";
+import BackOnePage from "../Buttons/BackOnePage";
 
 export default function Nav() {
   const { data: sessionData } = useSession();
@@ -20,20 +17,25 @@ export default function Nav() {
           <div className="flex h-16 justify-between align-middle">
             <div className="flex">
               <div className="flex flex-shrink-0 items-center">
-                <Link href="/" className="rounded">
+                <NextLink href="/" className="rounded">
                   <Image
                     className="h-10 w-10 rounded-full lg:hidden"
-                    src={sessionData?.user.image ?? logo}
+                    src={
+                      sessionData?.user.image ??
+                      "/images/svg/logo-no-background.svg"
+                    }
                     width={40}
                     height={40}
                     alt="Logo"
                   />
                   <Image
                     className="hidden h-12 w-auto lg:block"
-                    src={logo}
+                    src={"/images/svg/logo-no-background.svg"}
+                    width={40}
+                    height={40}
                     alt="Logo"
                   />
-                </Link>
+                </NextLink>
               </div>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:items-center">

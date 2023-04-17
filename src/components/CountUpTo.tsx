@@ -1,58 +1,45 @@
-import { useState, useEffect } from "react";
-import { debounce } from "~/utils/debounce";
+import { useCountUp } from "use-count-up";
+import useElementOnScreen from "~/hooks/useElementOnScreen";
 
+import { useState, useEffect } from "react";
 interface CounterProps {
-  end: number;
+  targetNumber: number;
   duration: number;
   delay?: number;
   before?: string;
   after?: string;
+  initialNumber?: number;
 }
 
 export default function Counter({
-  end,
+  targetNumber,
   duration,
   before,
   after,
-  delay,
+  delay = 0,
 }: CounterProps) {
-  const [count, setCount] = useState("0");
-  const step = end / (duration / 1000);
-  const padding = end.toString().length;
+  const [ref, isOnScreen] = useElementOnScreen(true);
+  const [isCounting, setIsCounting] = useState(false);
   useEffect(() => {
-    let animationFrameId: number;
-    let timeoutId: number;
+    if (isOnScreen) {
+      setTimeout(() => {
+        setIsCounting(true);
+      }, delay * 1000);
+    }
+  }, [isOnScreen]);
 
-    const start = Date.now();
-    const animate = () => {
-      const now = Date.now();
-      const timeElapsed = now - start;
-
-      if (Number(count) < end) {
-        setCount(
-          Math.min(Math.round(step * timeElapsed), end)
-            .toString()
-            .padStart(padding, "0")
-        );
-        animationFrameId = requestAnimationFrame(debouncedAnimate);
-      }
-    };
-    const debouncedAnimate = debounce(animate, 1000 / 60);
-
-    timeoutId = window.setTimeout(() => {
-      animationFrameId = requestAnimationFrame(debouncedAnimate);
-    }, delay);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      clearTimeout(timeoutId);
-    };
-  }, [count, end, step, duration, delay]);
+  const padTo = targetNumber.toString().length;
+  const { value } = useCountUp({
+    isCounting,
+    end: targetNumber,
+    duration,
+    easing: "easeOutCubic",
+  });
   return (
-    <>
+    <pre className="mb-8 text-xl font-bold  md:text-2xl" ref={ref}>
       {before && before + " "}
-      {count}
+      {value?.toString().padStart(padTo, "0")}
       {after && " " + after}
-    </>
+    </pre>
   );
 }

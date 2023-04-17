@@ -8,7 +8,7 @@ import html from "remark-html";
 import Typography from "./Typography";
 import Loading from "./Loading";
 import Comments from "./Comments";
-import ParallaxBox from "./ParallaxBox";
+import ParallaxBox from "./Images/ParallaxBox";
 import { BiCalendar } from "react-icons/bi";
 
 interface ArticleProps {

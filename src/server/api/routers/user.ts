@@ -94,6 +94,7 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().optional(),
+        role: z.enum([UserRole.EDITOR, UserRole.CONTRIBUTOR]).optional(),
         email: z.string().optional(),
         username: z.string().optional(),
         phone: z.string().optional(),

@@ -5,8 +5,12 @@ import Link from "~/components/Link";
 import { api } from "~/utils/api";
 import Feed from "~/components/Feed";
 import Loading from "./Loading";
+import { UserRole } from "@prisma/client";
+import { useContext, useEffect, useState } from "react";
+import { RoleContext } from "~/context/role";
 
 export default function HomePage() {
+  const { role } = useContext(RoleContext);
   const { data: sessionData } = useSession();
   const { data: user } = api.user.get.useQuery();
   const { data: recentArticles } = api.articles.getRecent.useQuery();
@@ -14,8 +18,6 @@ export default function HomePage() {
   if (!sessionData?.user || !user) {
     return <Loading />;
   }
-  const contributorControls =
-    user.role === "CONTRIBUTOR" || user.role === "EDITOR";
   return (
     <>
       <div className="w-full flex-grow">
@@ -49,7 +51,7 @@ export default function HomePage() {
                   </Link>
                 </div>
               </Card>
-              {contributorControls && (
+              {role === "CONTRIBUTOR" && (
                 <Link href="/articles/new" padding="p-0">
                   <p className="m-0 flex items-center rounded-lg bg-slate-700 p-4 shadow-md hover:bg-gray-100">
                     <BiPlus />
@@ -77,7 +79,7 @@ export default function HomePage() {
                   </span>
                 </p>
               </Link>
-              {contributorControls && (
+              {role === "CONTRIBUTOR" && (
                 <Link href={`/articles/by-me`} padding="p-0">
                   <p className="flex w-full items-center rounded-lg bg-slate-700 p-4 shadow-md hover:bg-gray-100">
                     <BiBookOpen />
@@ -85,7 +87,7 @@ export default function HomePage() {
                   </p>
                 </Link>
               )}
-              {contributorControls && (
+              {role === "CONTRIBUTOR" && (
                 <Card>
                   <Link
                     href={"/articles/by-me"}
