@@ -18,7 +18,7 @@ const Layout = ({ children, title }: LayoutProps) => {
       <Head title={title} />
       <Nav />
       {role === "USER" && <SelectRole />}
-      <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-800 to-gray-800">
+      <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-800 via-slate-800 to-gray-800">
         <main className="mx-auto flex h-full max-w-7xl flex-col items-center justify-start px-4 py-10 pt-28 md:px-8">
           {children}
           <BackToTop />

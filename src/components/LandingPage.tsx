@@ -59,7 +59,7 @@ export default function LandingPage() {
     <>
       <Head title={"Scratcher Blockchain"} />
       <LandingPageNav />
-      <main className="min-h-screen">
+      <main className="min-h-screen overflow-x-hidden">
         <section className="bg-blue-500 py-0">
           <Hero image={"/images/svg/waves.svg"}>
             <div>
